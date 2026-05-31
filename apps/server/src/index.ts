@@ -8,6 +8,7 @@ import { logger } from "./lib/logger";
 import { briefAnalysisRoutes } from "./routes/analysis.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { briefRoutes } from "./routes/brief.routes";
+import { notificationRoutes } from "./routes/notification.routes";
 import {
   briefProposalRoutes,
   venueProposalRoutes,
@@ -31,7 +32,7 @@ app.use(
     origin: env.FRONTEND_URL,
     credentials: true,
     allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["GET", "POST", "OPTIONS"],
+    allowMethods: ["GET", "POST", "PATCH", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
   }),
@@ -49,6 +50,7 @@ app.route("/briefs", briefProposalRoutes);
 app.route("/briefs", briefAnalysisRoutes);
 app.route("/venues", venueRoutes);
 app.route("/venues", venueProposalRoutes);
+app.route("/notifications", notificationRoutes);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
