@@ -6,8 +6,11 @@ import { csrf } from "hono/csrf";
 import { prettyJSON } from "hono/pretty-json";
 import { env } from "./lib/env";
 import { authRoutes } from "./routes/auth.routes";
+import { errorHandler } from "./middleware/error.middleware";
 
 const app = new Hono();
+
+app.onError(errorHandler);
 
 // Logger middleware
 app.use(logger());

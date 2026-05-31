@@ -20,10 +20,17 @@ export function captureJobFailure(
   error: unknown,
   extra: Record<string, unknown>,
 ): void {
+  captureException(error, extra);
+}
+
+export function captureException(
+  error: unknown,
+  extra?: Record<string, unknown>,
+): void {
   if (env.SENTRY_DSN) {
-    Sentry.captureException(error, { extra });
+    Sentry.captureException(error, extra ? { extra } : undefined);
     return;
   }
 
-  console.error("[jobs] Job failed:", error, extra);
+  console.error("[sentry] Exception:", error, extra);
 }
