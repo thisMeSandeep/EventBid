@@ -5,6 +5,7 @@ import { csrf } from "hono/csrf";
 import { prettyJSON } from "hono/pretty-json";
 import { env } from "./lib/env";
 import { logger } from "./lib/logger";
+import { briefAnalysisRoutes } from "./routes/analysis.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { briefRoutes } from "./routes/brief.routes";
 import {
@@ -45,6 +46,7 @@ app.use(prettyJSON());
 app.route("/", authRoutes);
 app.route("/briefs", briefRoutes);
 app.route("/briefs", briefProposalRoutes);
+app.route("/briefs", briefAnalysisRoutes);
 app.route("/venues", venueRoutes);
 app.route("/venues", venueProposalRoutes);
 
