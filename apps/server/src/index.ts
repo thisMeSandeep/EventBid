@@ -13,6 +13,7 @@ import {
   briefProposalRoutes,
   venueProposalRoutes,
 } from "./routes/proposal.routes";
+import { sseRoutes } from "./routes/sse.routes";
 import { venueRoutes } from "./routes/venue.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import { requestLogger } from "./middleware/request-log.middleware";
@@ -38,6 +39,18 @@ app.use(
   }),
 );
 
+app.use(
+  "/sse/*",
+  cors({
+    origin: env.FRONTEND_URL,
+    credentials: true,
+    allowHeaders: ["Content-Type", "Authorization", "Last-Event-ID"],
+    allowMethods: ["GET", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+  }),
+);
+
 // CSRF protection middleware
 app.use(csrf());
 
@@ -51,6 +64,7 @@ app.route("/briefs", briefAnalysisRoutes);
 app.route("/venues", venueRoutes);
 app.route("/venues", venueProposalRoutes);
 app.route("/notifications", notificationRoutes);
+app.route("/sse", sseRoutes);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
