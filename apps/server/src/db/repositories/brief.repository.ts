@@ -66,4 +66,8 @@ export class BriefRepository {
       .set({ status })
       .where(eq(briefs.id, id));
   }
+
+  async delete(id: string): Promise<void> {
+    await this.db.delete(briefs).where(eq(briefs.id, id));
+  }
 }
