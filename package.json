@@ -8,6 +8,8 @@
     "build": "pnpm -r build",
     "db:generate": "pnpm --filter server db:generate",
     "db:migrate": "pnpm --filter server db:migrate",
+    "db:push": "pnpm --filter server db:push",
+    "db:studio": "pnpm --filter server db:studio",
     "typecheck": "pnpm -r typecheck"
   }
 }

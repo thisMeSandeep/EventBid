@@ -13,5 +13,6 @@
     "srcDir": "./src",
     "outDir": "./dist"
   },
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "drizzle.config.ts"]
 }
