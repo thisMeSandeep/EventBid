@@ -118,7 +118,22 @@ export class VenueRepository {
       .where(eq(venues.id, id));
   }
 
-  async createPhoto(input: CreateVenuePhotoInput): Promise<VenuePhoto> {
+  async findPhotoById(
+    id: string,
+    venueId: string,
+  ): Promise<VenuePhoto | null> {
+    const rows = await this.db
+      .select()
+      .from(venuePhotos)
+      .where(and(eq(venuePhotos.id, id), eq(venuePhotos.venueId, venueId)))
+      .limit(1);
+
+    return rows[0] ?? null;
+  }
+
+  async createPhoto(
+    input: CreateVenuePhotoInput & { id?: string },
+  ): Promise<VenuePhoto> {
     const rows = await this.db
       .insert(venuePhotos)
       .values(input)

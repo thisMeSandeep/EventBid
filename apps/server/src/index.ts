@@ -6,6 +6,7 @@ import { prettyJSON } from "hono/pretty-json";
 import { env } from "./lib/env";
 import { logger } from "./lib/logger";
 import { authRoutes } from "./routes/auth.routes";
+import { venueRoutes } from "./routes/venue.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import { requestLogger } from "./middleware/request-log.middleware";
 
@@ -35,6 +36,7 @@ app.use(csrf());
 app.use(prettyJSON());
 
 app.route("/", authRoutes);
+app.route("/venues", venueRoutes);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
