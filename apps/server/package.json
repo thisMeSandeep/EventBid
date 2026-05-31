@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@eventbid/shared": "workspace:*",
+    "@eventbid/email": "workspace:*",
     "@better-auth/drizzle-adapter": "^1.6.12",
     "@hono/node-server": "^1.19.14",
     "@sentry/node": "^10.55.0",
@@ -28,6 +29,7 @@
     "ioredis": "^5.11.0",
     "pg": "^8.21.0",
     "postgres": "^3.4.9",
+    "resend": "^6.6.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
