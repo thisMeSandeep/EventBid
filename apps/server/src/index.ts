@@ -7,11 +7,17 @@ import { env } from "./lib/env";
 import { logger } from "./lib/logger";
 import { authRoutes } from "./routes/auth.routes";
 import { briefRoutes } from "./routes/brief.routes";
+import {
+  briefProposalRoutes,
+  venueProposalRoutes,
+} from "./routes/proposal.routes";
 import { venueRoutes } from "./routes/venue.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import { requestLogger } from "./middleware/request-log.middleware";
 
-const app = new Hono();
+export const API_BASE_PATH = "/api";
+
+const app = new Hono().basePath(API_BASE_PATH);
 
 app.onError(errorHandler);
 
@@ -38,7 +44,9 @@ app.use(prettyJSON());
 
 app.route("/", authRoutes);
 app.route("/briefs", briefRoutes);
+app.route("/briefs", briefProposalRoutes);
 app.route("/venues", venueRoutes);
+app.route("/venues", venueProposalRoutes);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
@@ -50,6 +58,9 @@ serve(
     port: env.PORT,
   },
   (info) => {
-    logger.info({ port: info.port }, "Server started");
+    logger.info(
+      { port: info.port, basePath: API_BASE_PATH },
+      "Server started",
+    );
   },
 );
