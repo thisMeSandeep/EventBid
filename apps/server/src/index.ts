@@ -7,7 +7,6 @@ import { repositories } from "./db/repositories";
 import { env } from "./lib/env";
 import { logger } from "./lib/logger";
 import { connectRedis, redis } from "./lib/redis";
-import { initSentry } from "./lib/sentry";
 import { JobEngine } from "./jobs/engine";
 import { jobRegistry } from "./jobs/registry";
 import { corsMiddleware } from "./middleware/cors.middleware";
@@ -26,8 +25,6 @@ import { venueRoutes } from "./routes/venue.routes";
 import { services } from "./services";
 
 export const API_BASE_PATH = "/api";
-
-initSentry();
 
 const app = new Hono();
 

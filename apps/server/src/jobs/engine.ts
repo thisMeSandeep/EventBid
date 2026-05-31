@@ -5,7 +5,6 @@ import type { JobPayload } from "../adapters/queue/queue.adapter.interface";
 import type { Repositories } from "../db/repositories";
 import type { RedisConnection } from "../lib/redis";
 import { logger } from "../lib/logger";
-import { captureJobFailure } from "../lib/sentry";
 import type { Services } from "../services";
 
 export interface JobDependencies {
@@ -48,10 +47,10 @@ export class JobEngine {
       );
 
       worker.on("failed", (job, error) => {
-        captureJobFailure(error, {
-          queueName: config.queueName,
-          jobId: job?.id,
-        });
+        logger.error(
+          { err: error, queueName: config.queueName, jobId: job?.id },
+          "Job failed",
+        );
       });
 
       worker.on("ready", () => {
