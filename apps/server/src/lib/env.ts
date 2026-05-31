@@ -21,6 +21,9 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string().min(1),
   CLOUDINARY_API_SECRET: z.string().min(1),
   FRONTEND_URL: z.string().url(),
+  LOG_LEVEL: z
+    .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
+    .optional(),
   SENTRY_DSN: z.string().optional(),
   NODE_ENV: z
     .enum(["development", "test", "production"])

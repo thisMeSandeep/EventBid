@@ -1,19 +1,19 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { logger } from "hono/logger";
 import { csrf } from "hono/csrf";
 import { prettyJSON } from "hono/pretty-json";
 import { env } from "./lib/env";
+import { logger } from "./lib/logger";
 import { authRoutes } from "./routes/auth.routes";
 import { errorHandler } from "./middleware/error.middleware";
+import { requestLogger } from "./middleware/request-log.middleware";
 
 const app = new Hono();
 
 app.onError(errorHandler);
 
-// Logger middleware
-app.use(logger());
+app.use(requestLogger);
 
 // CORS middleware
 app.use(
@@ -46,6 +46,6 @@ serve(
     port: env.PORT,
   },
   (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`);
+    logger.info({ port: info.port }, "Server started");
   },
 );

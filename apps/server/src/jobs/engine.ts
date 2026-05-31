@@ -4,6 +4,7 @@ import type { Adapters } from "../adapters";
 import type { JobPayload } from "../adapters/queue/queue.adapter.interface";
 import type { Repositories } from "../db/repositories";
 import type { RedisConnection } from "../lib/redis";
+import { logger } from "../lib/logger";
 import { captureJobFailure } from "../lib/sentry";
 import type { Services } from "../services";
 
@@ -54,7 +55,7 @@ export class JobEngine {
       });
 
       worker.on("ready", () => {
-        console.log(`[jobs] Worker ready: ${config.queueName}`);
+        logger.info({ queueName: config.queueName }, "Job worker ready");
       });
 
       if (config.cron) {
@@ -76,8 +77,9 @@ export class JobEngine {
         );
 
         this.cronQueues.push(queue);
-        console.log(
-          `[jobs] Cron scheduled: ${config.queueName} (${config.cron})`,
+        logger.info(
+          { queueName: config.queueName, cron: config.cron },
+          "Cron job scheduled",
         );
       }
 

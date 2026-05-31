@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/node";
 import { env } from "./env";
+import { logger } from "./logger";
 
 let initialized = false;
 
@@ -32,5 +33,5 @@ export function captureException(
     return;
   }
 
-  console.error("[sentry] Exception:", error, extra);
+  logger.error({ err: error, ...extra }, "Exception captured");
 }

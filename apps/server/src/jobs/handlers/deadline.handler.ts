@@ -1,6 +1,7 @@
 import type { Brief } from "@eventbid/shared";
 import type { JobDependencies } from "../engine";
 import type { JobPayload } from "../../adapters/queue/queue.adapter.interface";
+import { logger } from "../../lib/logger";
 
 export async function deadlineHandler(
   _payload: JobPayload,
@@ -12,7 +13,7 @@ export async function deadlineHandler(
     return;
   }
 
-  console.log(`[jobs] Processing ${expiredBriefs.length} expired brief(s)`);
+  logger.info({ count: expiredBriefs.length }, "Processing expired briefs");
 
   for (const brief of expiredBriefs) {
     await repositories.briefs.updateStatus(brief.id, "expired");

@@ -1,6 +1,7 @@
 import type { ErrorHandler } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { AppError, getHttpStatusForErrorCode } from "../lib/errors";
+import { logger } from "../lib/logger";
 import { captureException } from "../lib/sentry";
 
 export const errorHandler: ErrorHandler = (error, c) => {
@@ -17,6 +18,7 @@ export const errorHandler: ErrorHandler = (error, c) => {
   }
 
   captureException(error);
+  logger.error({ err: error }, "Unhandled error");
 
   return c.json(
     {
