@@ -27,7 +27,7 @@ export interface AIProvider {
   improveBriefDescription(
     description: string,
     requirements: string[],
-  ): Promise<BriefDescriptionImprovement>;
+  ): AsyncIterable<string>;
   checkBriefQuality(brief: CreateBriefDto): Promise<BriefQualityResult>;
   embed(text: string): Promise<number[]>;
 }

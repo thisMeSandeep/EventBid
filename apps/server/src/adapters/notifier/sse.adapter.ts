@@ -16,6 +16,7 @@ export class SSENotifierAdapter implements NotifierAdapter {
     userId: string,
     event: string,
     data: Record<string, unknown>,
+    options?: { id?: string },
   ): Promise<void> {
     const stream = this.streams.get(userId);
     if (!stream) {
@@ -23,6 +24,7 @@ export class SSENotifierAdapter implements NotifierAdapter {
     }
 
     await stream.writeSSE({
+      id: options?.id,
       event,
       data: JSON.stringify(data),
     });

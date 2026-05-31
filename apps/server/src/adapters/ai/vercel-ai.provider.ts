@@ -6,7 +6,6 @@ import { improveBriefDescriptionWithAI } from "./functions/improve-brief-descrip
 import type {
   AIProvider,
   AnalysisResult,
-  BriefDescriptionImprovement,
   BriefQualityResult,
 } from "./ai.provider.interface";
 import type {
@@ -31,7 +30,7 @@ export class VercelAIProvider implements AIProvider {
   improveBriefDescription(
     description: string,
     requirements: string[],
-  ): Promise<BriefDescriptionImprovement> {
+  ): AsyncIterable<string> {
     return improveBriefDescriptionWithAI(
       this.generationModel,
       description,
