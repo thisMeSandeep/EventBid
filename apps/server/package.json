@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "tsx --env-file=.env watch src/index.ts",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -11,6 +12,7 @@
     "db:studio": " drizzle-kit studio"
   },
   "dependencies": {
+    "@eventbid/shared": "workspace:*",
     "@better-auth/drizzle-adapter": "^1.6.12",
     "@hono/node-server": "^1.19.14",
     "@sentry/node": "^10.55.0",

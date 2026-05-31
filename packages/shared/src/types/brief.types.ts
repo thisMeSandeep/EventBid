@@ -1,5 +1,10 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import type { briefs } from "@eventbid/server-schema";
+import type {
+  aiAnalyses,
+  briefVenueMatches,
+  briefs,
+  notifications,
+} from "@eventbid/server-schema";
 
 export type Brief = InferSelectModel<typeof briefs>;
 export type CreateBriefInput = Omit<
@@ -13,3 +18,21 @@ export type UpdateBriefInput = Partial<
   >
 >;
 export type BriefStatus = Brief["status"];
+
+export type BriefVenueMatch = InferSelectModel<typeof briefVenueMatches>;
+export type CreateBriefVenueMatchInput = Omit<
+  InferInsertModel<typeof briefVenueMatches>,
+  "id" | "createdAt"
+>;
+
+export type AiAnalysis = InferSelectModel<typeof aiAnalyses>;
+export type CreateAiAnalysisInput = Omit<
+  InferInsertModel<typeof aiAnalyses>,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+export type Notification = InferSelectModel<typeof notifications>;
+export type CreateNotificationInput = Omit<
+  InferInsertModel<typeof notifications>,
+  "id" | "createdAt" | "read"
+>;

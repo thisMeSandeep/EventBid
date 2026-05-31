@@ -209,7 +209,7 @@ Build every repository before touching services. Repositories are the only layer
 
 ---
 
-### Step 5 — VenueRepository
+### [x] Step 5 — VenueRepository
 
 **Goal:** All database operations for venues and venue photos in one class.
 
@@ -242,7 +242,7 @@ findPhotosByVenueId(venueId)           → VenuePhoto[]
 
 ---
 
-### Step 6 — BriefRepository
+### [x] Step 6 — BriefRepository
 
 **File to create:** `apps/server/src/db/repositories/brief.repository.ts`
 
@@ -264,7 +264,7 @@ updateStatus(id, status)               → void
 
 ---
 
-### Step 7 — ProposalRepository
+### [x] Step 7 — ProposalRepository
 
 **File to create:** `apps/server/src/db/repositories/proposal.repository.ts`
 
@@ -289,7 +289,7 @@ supersedeAndCreate(venueId, briefId, input) → Proposal   (marks old version su
 
 ---
 
-### Step 8 — BriefVenueMatchRepository + AnalysisRepository + NotificationRepository
+### [x] Step 8 — BriefVenueMatchRepository + AnalysisRepository + NotificationRepository
 
 Three smaller repositories in one step — each is straightforward.
 
@@ -333,7 +333,7 @@ markAllRead(userId)                        → void
 
 ---
 
-### Step 9 — Repository index + wiring
+### [x] Step 9 — Repository index + wiring
 
 **Goal:** One canonical `repositories` object, instantiated once, imported by services.
 

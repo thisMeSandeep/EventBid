@@ -9,10 +9,12 @@
     "types": ["node"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "rootDir": "./src",
-    "srcDir": "./src",
-    "outDir": "./dist"
+    "rootDir": "../..",
+    "outDir": "./dist",
+    "paths": {
+      "@eventbid/server-schema": ["./src/db/schema.ts"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "../../packages/shared/src/**/*.ts"],
   "exclude": ["node_modules", "drizzle.config.ts"]
 }
