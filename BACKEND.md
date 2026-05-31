@@ -24,10 +24,13 @@ Install these before starting Phase 1 so steps below work as written.
 - @upstash/ratelimit
 - bullmq
 - ioredis
+- cloudinary
+- ai (use Vercel AI Gateway)
+
+**Install later (after core backend is working)**
+
 - @sentry/node
 - @sentry/profiling-node
-- @aws-sdk/client-s3 (For now we will use cloudinary)
-- ai - use aigaitway by vercel
 
 **apps/server devDependencies**
 
