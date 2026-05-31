@@ -13,6 +13,8 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   AI_GATEWAY_API_KEY: z.string().min(1),
   AI_GATEWAY_BASE_URL: z.string().optional(),
+  AI_GENERATION_MODEL: z.string().min(1),
+  AI_EMBEDDING_MODEL: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
   EMAIL_FROM: z.string().min(1),
   CLOUDINARY_CLOUD_NAME: z.string().min(1),
