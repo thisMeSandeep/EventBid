@@ -99,14 +99,7 @@ These steps produce nothing visible but everything else builds on them. Get thes
 
 **Files to create:**
 
-- `apps/server/src/db/schema/venue.schema.ts`
-- `apps/server/src/db/schema/venue-photo.schema.ts`
-- `apps/server/src/db/schema/brief.schema.ts`
-- `apps/server/src/db/schema/proposal.schema.ts`
-- `apps/server/src/db/schema/brief-venue-match.schema.ts`
-- `apps/server/src/db/schema/analysis.schema.ts`
-- `apps/server/src/db/schema/notification.schema.ts`
-- `apps/server/src/db/schema/index.ts` — re-exports all schemas
+- `apps/server/src/db/schema.ts` — single schema file (all tables + indexes)
 
 **Note on auth tables:** Do NOT define `user`, `session`, `account`, or `verification` tables here. Better Auth's Drizzle adapter generates those. Our schema files only reference `user.id` as a foreign key string — we'll wire the actual FK after Better Auth is set up in Step 4.
 
@@ -124,9 +117,9 @@ All indexes from the architecture doc go in each schema file using Drizzle's `in
 
 **✅ Done when:**
 
-- All schema files exist with correct columns, types, and constraints
+- `apps/server/src/db/schema.ts` contains all tables with correct columns, types, and constraints
 - `import { venues, briefs, proposals } from './db/schema'` works without TS errors
-- No `any` types anywhere in schema files
+- No `any` types anywhere in schema
 
 ---
 

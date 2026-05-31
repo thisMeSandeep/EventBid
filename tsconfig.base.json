@@ -8,6 +8,10 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "noUncheckedIndexedAccess": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "*": ["./../../*"],
+      "@eventbid/server-schema": ["./apps/server/src/db/schema.ts"]
+    }
   }
 }
