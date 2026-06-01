@@ -1,5 +1,5 @@
 import { formOptions, useForm } from '@tanstack/react-form'
-import { createBriefSchema } from '@eventbid/shared'
+import { createBriefSchema, type Brief } from '@eventbid/shared'
 
 export type WizardValues = {
   eventType: '' | 'wedding' | 'birthday' | 'party' | 'other'
@@ -35,11 +35,33 @@ export const briefWizardOpts = formOptions({ defaultValues: wizardDefaultValues 
 
 // Single source of the wizard form instance. Step components take `form` typed
 // as the inferred return type below — avoids re-specifying useForm's generics.
-export function useBriefForm() {
-  return useForm(briefWizardOpts)
+// Pass `initial` (e.g. from an existing brief) to seed the edit form.
+export function useBriefForm(initial?: Partial<WizardValues>) {
+  return useForm({
+    ...briefWizardOpts,
+    defaultValues: { ...wizardDefaultValues, ...initial },
+  })
 }
 
 export type BriefWizardForm = ReturnType<typeof useBriefForm>
+
+/** Map an existing brief into wizard form values (inputs hold strings). */
+export function briefToWizardValues(b: Brief): WizardValues {
+  return {
+    eventType: b.eventType as WizardValues['eventType'],
+    eventDateFrom: b.eventDateFrom,
+    eventDateTo: b.eventDateTo,
+    timeOfDay: (b.timeOfDay ?? '') as WizardValues['timeOfDay'],
+    headcount: String(b.headcount),
+    city: b.city,
+    state: b.state,
+    budgetMin: String(b.budgetMin),
+    budgetMax: String(b.budgetMax),
+    requirements: b.requirements ?? [],
+    description: b.description ?? '',
+    deadline: b.deadline ? new Date(b.deadline).toISOString().slice(0, 10) : '',
+  }
+}
 
 const toNum = (s: string) => (s === '' ? undefined : Number(s))
 

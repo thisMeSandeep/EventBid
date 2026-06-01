@@ -578,7 +578,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 19 — Proposal full-view modal
+### Step 19 — Proposal full-view modal  [x]
 
 **Goal:** "View Full Proposal" opens a quick-look dialog with all proposal fields.
 
@@ -600,7 +600,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 20 — `PATCH /briefs/:id` (edit brief) — open only
+### Step 20 — `PATCH /briefs/:id` (edit brief) — open only  [x]
 
 **Goal:** Hosts can edit a brief while it's `open` (deadline, description, requirements). Closed/evaluating: edit disabled.
 

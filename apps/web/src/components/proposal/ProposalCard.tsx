@@ -4,6 +4,7 @@ import type { ProposalWithVenue } from '#/server/briefs'
 import { Button } from '#/components/ui/button'
 import { formatRupees } from '#/lib/format'
 import { AcceptProposalDialog } from './AcceptProposalDialog'
+import { ProposalDetailDialog } from './ProposalDetailDialog'
 
 const priceTypeLabel: Record<string, string> = {
   total: 'total',
@@ -21,6 +22,7 @@ interface ProposalCardProps {
 
 export function ProposalCard({ proposal, briefId, canAccept }: ProposalCardProps) {
   const [acceptOpen, setAcceptOpen] = useState(false)
+  const [detailOpen, setDetailOpen] = useState(false)
   const isLocked = proposal.status === 'locked'
   const isClosed = proposal.status === 'closed'
 
@@ -72,8 +74,12 @@ export function ProposalCard({ proposal, briefId, canAccept }: ProposalCardProps
       )}
 
       <div className="mt-4 flex gap-2">
-        {/* Opens the full-view modal in Step 19. */}
-        <Button variant="outline" size="sm" className="flex-1">
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1"
+          onClick={() => setDetailOpen(true)}
+        >
           View Full Proposal
         </Button>
         {canAccept && proposal.status === 'active' && (
@@ -82,6 +88,17 @@ export function ProposalCard({ proposal, briefId, canAccept }: ProposalCardProps
           </Button>
         )}
       </div>
+
+      <ProposalDetailDialog
+        proposal={proposal}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        canAccept={canAccept}
+        onAccept={() => {
+          setDetailOpen(false)
+          setAcceptOpen(true)
+        }}
+      />
 
       <AcceptProposalDialog
         proposal={proposal}

@@ -21,6 +21,7 @@ import { Route as AppHostBriefsIndexRouteImport } from './routes/_app/host/brief
 import { Route as AppHostBriefsNewRouteImport } from './routes/_app/host/briefs/new'
 import { Route as AppHostBriefsBriefIdRouteRouteImport } from './routes/_app/host/briefs/$briefId/route'
 import { Route as AppHostBriefsBriefIdIndexRouteImport } from './routes/_app/host/briefs/$briefId/index'
+import { Route as AppHostBriefsBriefIdEditRouteImport } from './routes/_app/host/briefs/$briefId/edit'
 
 const PublicRouteRoute = PublicRouteRouteImport.update({
   id: '/_public',
@@ -82,6 +83,12 @@ const AppHostBriefsBriefIdIndexRoute =
     path: '/',
     getParentRoute: () => AppHostBriefsBriefIdRouteRoute,
   } as any)
+const AppHostBriefsBriefIdEditRoute =
+  AppHostBriefsBriefIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => AppHostBriefsBriefIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/host/briefs/$briefId': typeof AppHostBriefsBriefIdRouteRouteWithChildren
   '/host/briefs/new': typeof AppHostBriefsNewRoute
   '/host/briefs/': typeof AppHostBriefsIndexRoute
+  '/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
   '/host/briefs/$briefId/': typeof AppHostBriefsBriefIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -104,6 +112,7 @@ export interface FileRoutesByTo {
   '/onboarding/role': typeof OnboardingRoleRoute
   '/host/briefs/new': typeof AppHostBriefsNewRoute
   '/host/briefs': typeof AppHostBriefsIndexRoute
+  '/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
   '/host/briefs/$briefId': typeof AppHostBriefsBriefIdIndexRoute
 }
 export interface FileRoutesById {
@@ -119,6 +128,7 @@ export interface FileRoutesById {
   '/_app/host/briefs/$briefId': typeof AppHostBriefsBriefIdRouteRouteWithChildren
   '/_app/host/briefs/new': typeof AppHostBriefsNewRoute
   '/_app/host/briefs/': typeof AppHostBriefsIndexRoute
+  '/_app/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
   '/_app/host/briefs/$briefId/': typeof AppHostBriefsBriefIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/host/briefs/$briefId'
     | '/host/briefs/new'
     | '/host/briefs/'
+    | '/host/briefs/$briefId/edit'
     | '/host/briefs/$briefId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/onboarding/role'
     | '/host/briefs/new'
     | '/host/briefs'
+    | '/host/briefs/$briefId/edit'
     | '/host/briefs/$briefId'
   id:
     | '__root__'
@@ -158,6 +170,7 @@ export interface FileRouteTypes {
     | '/_app/host/briefs/$briefId'
     | '/_app/host/briefs/new'
     | '/_app/host/briefs/'
+    | '/_app/host/briefs/$briefId/edit'
     | '/_app/host/briefs/$briefId/'
   fileRoutesById: FileRoutesById
 }
@@ -254,15 +267,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHostBriefsBriefIdIndexRouteImport
       parentRoute: typeof AppHostBriefsBriefIdRouteRoute
     }
+    '/_app/host/briefs/$briefId/edit': {
+      id: '/_app/host/briefs/$briefId/edit'
+      path: '/edit'
+      fullPath: '/host/briefs/$briefId/edit'
+      preLoaderRoute: typeof AppHostBriefsBriefIdEditRouteImport
+      parentRoute: typeof AppHostBriefsBriefIdRouteRoute
+    }
   }
 }
 
 interface AppHostBriefsBriefIdRouteRouteChildren {
+  AppHostBriefsBriefIdEditRoute: typeof AppHostBriefsBriefIdEditRoute
   AppHostBriefsBriefIdIndexRoute: typeof AppHostBriefsBriefIdIndexRoute
 }
 
 const AppHostBriefsBriefIdRouteRouteChildren: AppHostBriefsBriefIdRouteRouteChildren =
   {
+    AppHostBriefsBriefIdEditRoute: AppHostBriefsBriefIdEditRoute,
     AppHostBriefsBriefIdIndexRoute: AppHostBriefsBriefIdIndexRoute,
   }
 

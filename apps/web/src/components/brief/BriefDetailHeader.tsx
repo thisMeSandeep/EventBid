@@ -28,9 +28,20 @@ export function BriefDetailHeader({ brief, proposalCount }: BriefDetailHeaderPro
       </Link>
 
       <div className="mt-4 flex items-start justify-between gap-4">
-        <h1 className="text-xl font-semibold text-foreground">
-          {cap(brief.eventType)} in {brief.city}
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl font-semibold text-foreground">
+            {cap(brief.eventType)} in {brief.city}
+          </h1>
+          {brief.status === 'open' && (
+            <Link
+              to="/host/briefs/$briefId/edit"
+              params={{ briefId: brief.id }}
+              className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+            >
+              Edit
+            </Link>
+          )}
+        </div>
         {brief.status === 'open' && (
           <Button variant="outline" size="sm" onClick={() => setCloseOpen(true)}>
             Close Brief
