@@ -624,7 +624,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 21 — Delete brief (open + 0 proposals only)
+### Step 21 — Delete brief (open + 0 proposals only)  [x]
 
 **Goal:** Host can delete an empty open brief.
 

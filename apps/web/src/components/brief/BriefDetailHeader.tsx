@@ -1,10 +1,17 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, MoreHorizontal } from 'lucide-react'
 import type { Brief } from '@eventbid/shared'
 import { BriefStatusBadge } from './BriefStatusBadge'
 import { CloseBriefDialog } from './CloseBriefDialog'
+import { DeleteBriefDialog } from './DeleteBriefDialog'
 import { Button } from '#/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '#/components/ui/dropdown-menu'
 import { formatDate } from '#/lib/format'
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
@@ -16,6 +23,8 @@ interface BriefDetailHeaderProps {
 
 export function BriefDetailHeader({ brief, proposalCount }: BriefDetailHeaderProps) {
   const [closeOpen, setCloseOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const canDelete = brief.status === 'open' && proposalCount === 0
 
   return (
     <div>
@@ -42,11 +51,33 @@ export function BriefDetailHeader({ brief, proposalCount }: BriefDetailHeaderPro
             </Link>
           )}
         </div>
-        {brief.status === 'open' && (
-          <Button variant="outline" size="sm" onClick={() => setCloseOpen(true)}>
-            Close Brief
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {brief.status === 'open' && (
+            <Button variant="outline" size="sm" onClick={() => setCloseOpen(true)}>
+              Close Brief
+            </Button>
+          )}
+          {canDelete && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label="More actions"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => setDeleteOpen(true)}
+                >
+                  Delete brief
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
       </div>
 
       <CloseBriefDialog
@@ -54,6 +85,12 @@ export function BriefDetailHeader({ brief, proposalCount }: BriefDetailHeaderPro
         proposalCount={proposalCount}
         open={closeOpen}
         onOpenChange={setCloseOpen}
+      />
+
+      <DeleteBriefDialog
+        briefId={brief.id}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
       />
 
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
