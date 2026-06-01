@@ -9,7 +9,13 @@ import { Input } from '#/components/ui/input'
 
 const label = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
-export function RequirementsStep({ form }: { form: BriefWizardForm }) {
+export function RequirementsStep({
+  form,
+  briefId,
+}: {
+  form: BriefWizardForm
+  briefId?: string
+}) {
   const [improveOpen, setImproveOpen] = useState(false)
 
   return (
@@ -56,14 +62,16 @@ export function RequirementsStep({ form }: { form: BriefWizardForm }) {
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <Label htmlFor={field.name}>Description</Label>
-              <button
-                type="button"
-                onClick={() => setImproveOpen((v) => !v)}
-                className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                Improve with AI
-              </button>
+              {briefId && (
+                <button
+                  type="button"
+                  onClick={() => setImproveOpen((v) => !v)}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Improve with AI
+                </button>
+              )}
             </div>
             <Textarea
               id={field.name}
@@ -72,10 +80,19 @@ export function RequirementsStep({ form }: { form: BriefWizardForm }) {
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
-            <BriefImproveStreamPanel
-              open={improveOpen}
-              onClose={() => setImproveOpen(false)}
-            />
+            {briefId && (
+              <BriefImproveStreamPanel
+                open={improveOpen}
+                onClose={() => setImproveOpen(false)}
+                briefId={briefId}
+                description={field.state.value}
+                requirements={form.state.values.requirements}
+                onApply={(t) => {
+                  field.handleChange(t)
+                  setImproveOpen(false)
+                }}
+              />
+            )}
           </div>
         )}
       </form.Field>

@@ -60,7 +60,7 @@ export function BriefEditForm({ brief }: { brief: Brief }) {
         <LocationBudgetStep form={form} />
       </Section>
       <Section title="Requirements">
-        <RequirementsStep form={form} />
+        <RequirementsStep form={form} briefId={brief.id} />
       </Section>
 
       <form.Subscribe selector={(s) => s.values}>

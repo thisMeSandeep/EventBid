@@ -646,7 +646,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 22 — Brief improve streaming
+### Step 22 — Brief improve streaming  [x]
 
 **Goal:** "✦ Improve with AI" streams improved description text into a preview panel; "Apply" copies it into the form.
 
