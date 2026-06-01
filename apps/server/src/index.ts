@@ -1,6 +1,5 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { csrf } from "hono/csrf";
 import { prettyJSON } from "hono/pretty-json";
 import { adapters } from "./adapters";
 import { repositories } from "./db/repositories";
@@ -35,11 +34,6 @@ const api = new Hono().basePath(API_BASE_PATH);
 api.onError(errorHandler);
 api.use(requestLogger);
 api.use("/*", corsMiddleware);
-api.use(
-  csrf({
-    origin: env.FRONTEND_URL,
-  }),
-);
 api.use(prettyJSON());
 
 api.route("/", authRoutes);

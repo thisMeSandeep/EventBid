@@ -1,15 +1,18 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
+import { APIError } from "better-auth/api";
 import { auth } from "../lib/auth";
 import { db } from "../db/client";
 import { AppError } from "../lib/errors";
+import { logger } from "../lib/logger";
 
 export const authRoutes = new Hono();
 
-authRoutes.on(["GET", "POST"], "/auth/*", (c) => {
-  return auth.handler(c.req.raw);
-});
+// --- Specific routes FIRST ---
+// Hono matches in registration order; the /auth/* catch-all below would
+// otherwise swallow /auth/me and /auth/register and forward them to
+// Better Auth's handler, which returns 404 for unknown paths.
 
 authRoutes.get("/auth/me", async (c) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
@@ -43,24 +46,44 @@ authRoutes.post("/auth/register", async (c) => {
 
   const { name, email, password, role } = parsed.data;
 
-  // Sign up via Better Auth — returns a Response with Set-Cookie
-  const signUpResponse = await auth.api.signUpEmail({
-    body: { name, email, password },
-    asResponse: true,
-  });
-
-  if (!signUpResponse.ok) {
-    const errBody = await signUpResponse.json().catch(() => null) as { message?: string } | null;
-    const message = errBody?.message ?? "Registration failed";
-    throw new AppError("VALIDATION_ERROR", message);
+  let signUpResponse: Response;
+  try {
+    signUpResponse = await auth.api.signUpEmail({
+      body: { name, email, password },
+      asResponse: true,
+    });
+  } catch (err) {
+    if (err instanceof APIError) {
+      logger.warn({ err: err.message, status: err.status }, "Better Auth signUp rejected");
+      throw new AppError("VALIDATION_ERROR", err.message);
+    }
+    logger.error({ err }, "Better Auth signUp threw unexpected error");
+    throw err;
   }
 
-  const data = await signUpResponse.clone().json() as { user: { id: string } };
-  const userId = data.user.id;
+  if (!signUpResponse.ok) {
+    const errBody = (await signUpResponse.clone().json().catch(() => null)) as
+      | { message?: string }
+      | null;
+    logger.warn({ status: signUpResponse.status, body: errBody }, "signUp non-ok");
+    throw new AppError("VALIDATION_ERROR", errBody?.message ?? "Registration failed");
+  }
 
-  // Set the role directly in the user table
+  const data = (await signUpResponse.clone().json()) as { user?: { id?: string } };
+  const userId = data.user?.id;
+  if (!userId) {
+    logger.error({ data }, "signUp succeeded but no user.id in response");
+    throw new AppError("INTERNAL_ERROR", "Registration succeeded but user id missing");
+  }
+
   await db.execute(sql`UPDATE "user" SET role = ${role} WHERE id = ${userId}`);
+  logger.info({ userId, role }, "User registered with role");
 
-  // Forward the response (carries the session cookie)
+  // Forward the original response (carries Set-Cookie for the session)
   return signUpResponse;
+});
+
+// --- Better Auth catch-all LAST ---
+authRoutes.on(["GET", "POST"], "/auth/*", (c) => {
+  return auth.handler(c.req.raw);
 });
