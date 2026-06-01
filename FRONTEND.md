@@ -498,7 +498,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 16 — Brief detail layout route
+### Step 16 — Brief detail layout route  [x]
 
 **Goal:** Loading a brief detail page prefetches brief + proposals + analysis in parallel.
 

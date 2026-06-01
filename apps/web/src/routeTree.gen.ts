@@ -19,6 +19,7 @@ import { Route as AppVenueRouteRouteImport } from './routes/_app/venue/route'
 import { Route as AppHostRouteRouteImport } from './routes/_app/host/route'
 import { Route as AppHostBriefsIndexRouteImport } from './routes/_app/host/briefs/index'
 import { Route as AppHostBriefsNewRouteImport } from './routes/_app/host/briefs/new'
+import { Route as AppHostBriefsBriefIdRouteRouteImport } from './routes/_app/host/briefs/$briefId/route'
 import { Route as AppHostBriefsBriefIdIndexRouteImport } from './routes/_app/host/briefs/$briefId/index'
 
 const PublicRouteRoute = PublicRouteRouteImport.update({
@@ -69,11 +70,17 @@ const AppHostBriefsNewRoute = AppHostBriefsNewRouteImport.update({
   path: '/briefs/new',
   getParentRoute: () => AppHostRouteRoute,
 } as any)
+const AppHostBriefsBriefIdRouteRoute =
+  AppHostBriefsBriefIdRouteRouteImport.update({
+    id: '/briefs/$briefId',
+    path: '/briefs/$briefId',
+    getParentRoute: () => AppHostRouteRoute,
+  } as any)
 const AppHostBriefsBriefIdIndexRoute =
   AppHostBriefsBriefIdIndexRouteImport.update({
-    id: '/briefs/$briefId/',
-    path: '/briefs/$briefId/',
-    getParentRoute: () => AppHostRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppHostBriefsBriefIdRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
   '/onboarding/role': typeof OnboardingRoleRoute
+  '/host/briefs/$briefId': typeof AppHostBriefsBriefIdRouteRouteWithChildren
   '/host/briefs/new': typeof AppHostBriefsNewRoute
   '/host/briefs/': typeof AppHostBriefsIndexRoute
   '/host/briefs/$briefId/': typeof AppHostBriefsBriefIdIndexRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
   '/onboarding/role': typeof OnboardingRoleRoute
+  '/_app/host/briefs/$briefId': typeof AppHostBriefsBriefIdRouteRouteWithChildren
   '/_app/host/briefs/new': typeof AppHostBriefsNewRoute
   '/_app/host/briefs/': typeof AppHostBriefsIndexRoute
   '/_app/host/briefs/$briefId/': typeof AppHostBriefsBriefIdIndexRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/onboarding/role'
+    | '/host/briefs/$briefId'
     | '/host/briefs/new'
     | '/host/briefs/'
     | '/host/briefs/$briefId/'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/_public/login'
     | '/_public/register'
     | '/onboarding/role'
+    | '/_app/host/briefs/$briefId'
     | '/_app/host/briefs/new'
     | '/_app/host/briefs/'
     | '/_app/host/briefs/$briefId/'
@@ -229,26 +240,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHostBriefsNewRouteImport
       parentRoute: typeof AppHostRouteRoute
     }
+    '/_app/host/briefs/$briefId': {
+      id: '/_app/host/briefs/$briefId'
+      path: '/briefs/$briefId'
+      fullPath: '/host/briefs/$briefId'
+      preLoaderRoute: typeof AppHostBriefsBriefIdRouteRouteImport
+      parentRoute: typeof AppHostRouteRoute
+    }
     '/_app/host/briefs/$briefId/': {
       id: '/_app/host/briefs/$briefId/'
-      path: '/briefs/$briefId'
+      path: '/'
       fullPath: '/host/briefs/$briefId/'
       preLoaderRoute: typeof AppHostBriefsBriefIdIndexRouteImport
-      parentRoute: typeof AppHostRouteRoute
+      parentRoute: typeof AppHostBriefsBriefIdRouteRoute
     }
   }
 }
 
-interface AppHostRouteRouteChildren {
-  AppHostBriefsNewRoute: typeof AppHostBriefsNewRoute
-  AppHostBriefsIndexRoute: typeof AppHostBriefsIndexRoute
+interface AppHostBriefsBriefIdRouteRouteChildren {
   AppHostBriefsBriefIdIndexRoute: typeof AppHostBriefsBriefIdIndexRoute
 }
 
+const AppHostBriefsBriefIdRouteRouteChildren: AppHostBriefsBriefIdRouteRouteChildren =
+  {
+    AppHostBriefsBriefIdIndexRoute: AppHostBriefsBriefIdIndexRoute,
+  }
+
+const AppHostBriefsBriefIdRouteRouteWithChildren =
+  AppHostBriefsBriefIdRouteRoute._addFileChildren(
+    AppHostBriefsBriefIdRouteRouteChildren,
+  )
+
+interface AppHostRouteRouteChildren {
+  AppHostBriefsBriefIdRouteRoute: typeof AppHostBriefsBriefIdRouteRouteWithChildren
+  AppHostBriefsNewRoute: typeof AppHostBriefsNewRoute
+  AppHostBriefsIndexRoute: typeof AppHostBriefsIndexRoute
+}
+
 const AppHostRouteRouteChildren: AppHostRouteRouteChildren = {
+  AppHostBriefsBriefIdRouteRoute: AppHostBriefsBriefIdRouteRouteWithChildren,
   AppHostBriefsNewRoute: AppHostBriefsNewRoute,
   AppHostBriefsIndexRoute: AppHostBriefsIndexRoute,
-  AppHostBriefsBriefIdIndexRoute: AppHostBriefsBriefIdIndexRoute,
 }
 
 const AppHostRouteRouteWithChildren = AppHostRouteRoute._addFileChildren(
