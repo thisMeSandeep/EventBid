@@ -1,9 +1,27 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { meQuery } from '#/server/auth'
+import { NavBar } from '#/components/app/NavBar'
 
 export const Route = createFileRoute('/_app')({
-  component: () => (
-    <div>
-      <Outlet />
-    </div>
-  ),
+  beforeLoad: async ({ context: { queryClient }, location }) => {
+    const user = await queryClient.ensureQueryData(meQuery)
+    if (!user) {
+      throw redirect({ to: '/login', search: { next: location.href } })
+    }
+    return { user }
+  },
+  component: AppShell,
 })
+
+function AppShell() {
+  const { user } = Route.useRouteContext()
+  return (
+    <div className="min-h-screen bg-background">
+      <NavBar user={user} />
+      {/* pt-14 offsets the fixed nav height */}
+      <main className="pt-14">
+        <Outlet />
+      </main>
+    </div>
+  )
+}
