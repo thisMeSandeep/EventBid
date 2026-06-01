@@ -356,7 +356,7 @@ Mobile nav: hamburger drawer per `FRONTEND-DESIGN.md` §3.
 
 ---
 
-### Step 11 — Role guards + post-login routing
+### Step 11 — Role guards + post-login routing  [x]
 
 **Goal:** Hosts can't reach `/venue/*` and vice versa. Login lands users on their home route.
 
@@ -391,7 +391,7 @@ The host can now create briefs, see proposals, and accept one.
 
 ---
 
-### Step 12 — Brief server functions
+### Step 12 — Brief server functions  [x]
 
 **Goal:** Server functions and query options for briefs.
 
@@ -417,7 +417,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 13 — `/host/briefs` list page
+### Step 13 — `/host/briefs` list page  [x]
 
 **Goal:** Hosts see their own briefs, paginated, with status badges.
 

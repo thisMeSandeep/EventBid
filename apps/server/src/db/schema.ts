@@ -114,7 +114,7 @@ export const venues = pgTable(
   "venues",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    userId: uuid("user_id").notNull(),
+    userId: text("user_id").notNull(),
     name: text("name").notNull(),
     description: text("description"),
     city: text("city").notNull(),
@@ -151,7 +151,7 @@ export const briefs = pgTable(
   "briefs",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    hostId: uuid("host_id").notNull(),
+    hostId: text("host_id").notNull(),
     eventType: text("event_type").notNull(),
     eventDateFrom: date("event_date_from").notNull(),
     eventDateTo: date("event_date_to").notNull(),
@@ -234,7 +234,7 @@ export const notifications = pgTable(
   "notifications",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    userId: uuid("user_id").notNull(),
+    userId: text("user_id").notNull(),
     type: text("type").notNull(),
     briefId: uuid("brief_id"),
     proposalId: uuid("proposal_id"),

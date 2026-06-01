@@ -3,6 +3,10 @@ import { meQuery } from '#/server/auth'
 import { NavBar } from '#/components/app/NavBar'
 
 export const Route = createFileRoute('/_app')({
+  // Auth is resolved from the session cookie, which only exists in the browser.
+  // Render this subtree client-side so beforeLoad runs where the cookie is
+  // available — otherwise a hard refresh redirects to /login.
+  ssr: false,
   beforeLoad: async ({ context: { queryClient }, location }) => {
     const user = await queryClient.ensureQueryData(meQuery)
     if (!user) {

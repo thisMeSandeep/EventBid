@@ -14,6 +14,8 @@ type Role = 'host' | 'venue_rep'
 const homeFor = (role: Role) => (role === 'venue_rep' ? '/venue/feed' : '/host/briefs')
 
 export const Route = createFileRoute('/onboarding/role')({
+  // Client-only: auth depends on the browser session cookie (see _app/route.tsx).
+  ssr: false,
   beforeLoad: async ({ context: { queryClient }, location }) => {
     const user = await queryClient.fetchQuery(meQuery)
     if (!user) {
