@@ -524,7 +524,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 17 — Proposal cards + AI analysis (inline)
+### Step 17 — Proposal cards + AI analysis (inline)  [x]
 
 **Goal:** Host sees proposal cards (responsive grid for 3+) and can view AI analysis inline.
 
