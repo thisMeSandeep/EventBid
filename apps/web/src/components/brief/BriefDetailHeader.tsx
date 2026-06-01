@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import type { Brief } from '@eventbid/shared'
 import { BriefStatusBadge } from './BriefStatusBadge'
+import { CloseBriefDialog } from './CloseBriefDialog'
 import { Button } from '#/components/ui/button'
 import { formatDate } from '#/lib/format'
 
@@ -13,6 +15,8 @@ interface BriefDetailHeaderProps {
 }
 
 export function BriefDetailHeader({ brief, proposalCount }: BriefDetailHeaderProps) {
+  const [closeOpen, setCloseOpen] = useState(false)
+
   return (
     <div>
       <Link
@@ -28,12 +32,18 @@ export function BriefDetailHeader({ brief, proposalCount }: BriefDetailHeaderPro
           {cap(brief.eventType)} in {brief.city}
         </h1>
         {brief.status === 'open' && (
-          // Wired in Step 18.
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => setCloseOpen(true)}>
             Close Brief
           </Button>
         )}
       </div>
+
+      <CloseBriefDialog
+        briefId={brief.id}
+        proposalCount={proposalCount}
+        open={closeOpen}
+        onOpenChange={setCloseOpen}
+      />
 
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
         <BriefStatusBadge status={brief.status} />

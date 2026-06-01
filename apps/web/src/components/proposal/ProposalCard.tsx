@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { Check } from 'lucide-react'
 import type { ProposalWithVenue } from '#/server/briefs'
 import { Button } from '#/components/ui/button'
 import { formatRupees } from '#/lib/format'
+import { AcceptProposalDialog } from './AcceptProposalDialog'
 
 const priceTypeLabel: Record<string, string> = {
   total: 'total',
@@ -10,11 +12,43 @@ const priceTypeLabel: Record<string, string> = {
   per_day: 'per day',
 }
 
-export function ProposalCard({ proposal }: { proposal: ProposalWithVenue }) {
+interface ProposalCardProps {
+  proposal: ProposalWithVenue
+  briefId: string
+  /** True when the brief is still open (i.e. a proposal can be accepted). */
+  canAccept: boolean
+}
+
+export function ProposalCard({ proposal, briefId, canAccept }: ProposalCardProps) {
+  const [acceptOpen, setAcceptOpen] = useState(false)
+  const isLocked = proposal.status === 'locked'
+  const isClosed = proposal.status === 'closed'
+
   return (
-    <div className="rounded-lg border border-border p-5">
-      <h3 className="text-sm font-medium text-foreground">{proposal.venueName}</h3>
-      <p className="text-xs text-muted-foreground">{proposal.venueCity}</p>
+    <div
+      className={[
+        'rounded-lg border p-5',
+        isLocked ? 'border-emerald-300 bg-emerald-50/40' : 'border-border',
+        isClosed ? 'opacity-60' : '',
+      ].join(' ')}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <h3 className="text-sm font-medium text-foreground">{proposal.venueName}</h3>
+          <p className="text-xs text-muted-foreground">{proposal.venueCity}</p>
+        </div>
+        {isLocked && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">
+            <Check className="h-3 w-3" />
+            Accepted
+          </span>
+        )}
+        {isClosed && (
+          <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+            Closed
+          </span>
+        )}
+      </div>
 
       <p className="mt-3 text-xl font-semibold text-foreground">
         {formatRupees(proposal.totalPrice)}
@@ -37,10 +71,24 @@ export function ProposalCard({ proposal }: { proposal: ProposalWithVenue }) {
         </ul>
       )}
 
-      {/* Opens the full-view modal in Step 19. */}
-      <Button variant="outline" size="sm" className="mt-4 w-full">
-        View Full Proposal
-      </Button>
+      <div className="mt-4 flex gap-2">
+        {/* Opens the full-view modal in Step 19. */}
+        <Button variant="outline" size="sm" className="flex-1">
+          View Full Proposal
+        </Button>
+        {canAccept && proposal.status === 'active' && (
+          <Button size="sm" className="flex-1" onClick={() => setAcceptOpen(true)}>
+            Accept
+          </Button>
+        )}
+      </div>
+
+      <AcceptProposalDialog
+        proposal={proposal}
+        briefId={briefId}
+        open={acceptOpen}
+        onOpenChange={setAcceptOpen}
+      />
     </div>
   )
 }

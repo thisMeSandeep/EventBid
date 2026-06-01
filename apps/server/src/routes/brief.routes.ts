@@ -105,6 +105,20 @@ briefRoutes.patch("/:id", requireAuth, requireRole("host"), async (c) => {
   return c.json(brief);
 });
 
+// POST /briefs/:id/close — end an open brief without selecting a winner
+briefRoutes.post("/:id/close", requireAuth, requireRole("host"), async (c) => {
+  const user = c.get("user");
+  const briefId = c.req.param("id");
+  const existing = await requireOwnedBrief(briefId, user.id);
+
+  if (existing.status !== "open") {
+    throw new AppError("BRIEF_CLOSED", "Brief is not open");
+  }
+
+  const brief = await repositories.briefs.close(briefId);
+  return c.json(brief);
+});
+
 // DELETE /briefs/:id — delete an open brief with no proposals
 briefRoutes.delete("/:id", requireAuth, requireRole("host"), async (c) => {
   const user = c.get("user");

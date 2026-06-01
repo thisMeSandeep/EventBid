@@ -552,7 +552,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 18 — Accept proposal mutation + close brief
+### Step 18 — Accept proposal mutation + close brief  [x]
 
 **Goal:** Host can accept a proposal and close a brief, with confirmation dialogs.
 

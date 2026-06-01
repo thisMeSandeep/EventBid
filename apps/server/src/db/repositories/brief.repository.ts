@@ -5,7 +5,7 @@ import type {
   CreateBriefInput,
   UpdateBriefInput,
 } from "@eventbid/shared";
-import { briefs } from "../schema";
+import { briefs, proposals } from "../schema";
 
 export class BriefRepository {
   constructor(private readonly db: PostgresJsDatabase) {}
@@ -65,6 +65,25 @@ export class BriefRepository {
       .update(briefs)
       .set({ status })
       .where(eq(briefs.id, id));
+  }
+
+  /** Close a brief without a winner: mark the brief closed and decline any
+   *  still-active proposals, in one transaction. */
+  async close(id: string): Promise<Brief> {
+    return this.db.transaction(async (tx) => {
+      await tx
+        .update(proposals)
+        .set({ status: "closed" })
+        .where(and(eq(proposals.briefId, id), eq(proposals.status, "active")));
+
+      const rows = await tx
+        .update(briefs)
+        .set({ status: "closed", updatedAt: new Date() })
+        .where(eq(briefs.id, id))
+        .returning();
+
+      return rows[0]!;
+    });
   }
 
   async delete(id: string): Promise<void> {

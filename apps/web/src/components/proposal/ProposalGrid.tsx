@@ -1,7 +1,13 @@
 import type { ProposalWithVenue } from '#/server/briefs'
 import { ProposalCard } from './ProposalCard'
 
-export function ProposalGrid({ proposals }: { proposals: ProposalWithVenue[] }) {
+interface ProposalGridProps {
+  proposals: ProposalWithVenue[]
+  briefId: string
+  canAccept: boolean
+}
+
+export function ProposalGrid({ proposals, briefId, canAccept }: ProposalGridProps) {
   // Stack for 1–2 proposals; responsive grid for 3+.
   const grid = proposals.length >= 3
   return (
@@ -11,7 +17,7 @@ export function ProposalGrid({ proposals }: { proposals: ProposalWithVenue[] }) 
       }
     >
       {proposals.map((p) => (
-        <ProposalCard key={p.id} proposal={p} />
+        <ProposalCard key={p.id} proposal={p} briefId={briefId} canAccept={canAccept} />
       ))}
     </div>
   )

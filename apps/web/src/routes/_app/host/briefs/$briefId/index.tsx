@@ -61,7 +61,11 @@ function BriefDetailIndex() {
               description="Venues matched to this brief will send their proposals here."
             />
           ) : (
-            <ProposalGrid proposals={proposals} />
+            <ProposalGrid
+              proposals={proposals}
+              briefId={briefId}
+              canAccept={brief.status === 'open'}
+            />
           )}
         </div>
 
