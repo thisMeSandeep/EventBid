@@ -25,10 +25,11 @@ export function RegisterForm() {
   const registerMutation = useMutation({
     mutationFn: (values: { name: string; email: string; password: string; role: Role }) =>
       apiClient.post<{ user: { id: string } }>('/api/auth/register', values),
-    onSuccess: async () => {
+    onSuccess: async (_, variables) => {
       await queryClient.invalidateQueries({ queryKey: qk.me })
       await router.invalidate()
-      router.navigate({ to: '/' })
+      const home = variables.role === 'venue_rep' ? '/venue/feed' : '/host/briefs'
+      router.navigate({ to: home })
     },
     onError: (err) => {
       const message = err instanceof Error ? err.message : 'Something went wrong'

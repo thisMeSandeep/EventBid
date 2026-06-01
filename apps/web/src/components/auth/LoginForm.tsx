@@ -34,7 +34,13 @@ export function LoginForm({ next }: LoginFormProps) {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: qk.me })
       await router.invalidate()
-      router.navigate({ to: next ?? '/' })
+      if (next) {
+        router.navigate({ to: next })
+        return
+      }
+      const user = queryClient.getQueryData<{ role: string }>(qk.me)
+      const home = user?.role === 'venue_rep' ? '/venue/feed' : '/host/briefs'
+      router.navigate({ to: home })
     },
     onError: (err) => {
       const message = err instanceof Error ? err.message : 'Something went wrong'
