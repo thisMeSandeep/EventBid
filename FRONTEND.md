@@ -445,7 +445,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 14 — Brief creation wizard (skeleton + steps 1-2)
+### Step 14 — Brief creation wizard (skeleton + steps 1-2)  [x]
 
 **Goal:** Hosts can start a brief. Step 1-2 collect data; no submission yet.
 
@@ -473,7 +473,7 @@ All forward the session cookie via `apiServer`.
 
 ---
 
-### Step 15 — Brief wizard steps 3-4 + submission
+### Step 15 — Brief wizard steps 3-4 + submission  [x]
 
 **Goal:** Brief creation submits to the backend and lands on the new brief's detail page.
 
