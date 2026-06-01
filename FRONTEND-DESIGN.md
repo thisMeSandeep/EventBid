@@ -349,6 +349,44 @@ Status badge: small, pill-shaped, no heavy color fill.
 
 ---
 
+### Host — Brief Creation Wizard
+
+The most important first-touch flow for a host. It must feel like answering a friendly enquiry, not filling out a software form.
+
+**Layout:** `max-w-2xl mx-auto`. Single column. Multi-step, one step per screen — never a long scrolling form.
+
+**Step model:** Wizard step lives in the URL search param (`?step=1`). Browser back/forward preserves progress. Four steps:
+
+1. **Event basics** — event type (large radio cards), date(s), headcount
+2. **Location & budget** — city, state, budget min/max
+3. **Requirements & description** — requirement tags (toggleable), free-text description
+4. **Review** — read-only summary, AI quality warnings (if any), submit
+
+**Header (persistent across steps):**
+```
+← My Briefs
+Create a brief
+Step 2 of 4  ·  Location & budget
+```
+Back link top-left. Page title plain. Step indicator as plain muted text — no progress bars, no numbered dots. The user knows where they are because the page tells them.
+
+**Step body:** standard form spacing from §7. Section heading at the top of each step (`text-base font-medium`) with a one-line muted subtitle below it explaining the step in plain language.
+
+**Step navigation:**
+```
+                              [Back]  [Continue]
+```
+- Right-aligned, `gap-2`, bottom of the step body with `mt-10` above
+- `Back`: `variant="ghost"` — disabled on step 1
+- `Continue`: `variant="default"` — disabled until the current step validates
+- Final step replaces `Continue` with `Submit brief` — same variant, no special treatment
+
+**AI quality warnings (step 4):** rendered as a quiet inline list above the submit button — never a blocking modal. Each warning is a single line with a `text-amber-500/80` dot prefix. Heading: "A few things worth a second look" in `text-sm font-medium`. Warnings do not block submission — the host can submit anyway.
+
+**Improve description (step 3):** a small `variant="ghost"` link below the description textarea — "✦ Improve with AI". Clicking it opens a streaming panel inline below the textarea, text appearing word by word. An "Apply" button copies the streamed text into the description field. The original text is preserved until apply — never auto-replace.
+
+---
+
 ### Host — Brief Detail Page
 
 This is the most important page. A host comes here to read proposals and make a decision.
@@ -381,6 +419,8 @@ Section heading left, AI analysis trigger right. The AI analysis button only app
 
 When there are 1-2 proposals: full width stacked vertically.
 When there are 3+: side-by-side on `md+` screens (`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`), stacked on mobile.
+
+> **No separate "compare" page.** Side-by-side comparison happens on this page via the responsive grid. The brief detail page is the comparison view — there is no `/compare` route to design or build.
 
 Each proposal card:
 ```
@@ -514,6 +554,56 @@ Split into clearly separated sections with `mt-10` between each:
 4. **Save button** — `variant="default"`, right-aligned, sticky at bottom on mobile
 
 Tags (event types, amenities, style): small pills, `bg-accent text-accent-foreground rounded-full px-3 py-1 text-xs`. Editable — clicking an active tag removes it, clicking an inactive one adds it.
+
+---
+
+### Venue Rep — My Proposals Page
+
+**Layout:** `max-w-5xl mx-auto`.
+
+**Header:**
+```
+My Proposals
+Proposals you've submitted across all briefs
+```
+
+No primary action button — this is a status-tracking page.
+
+**Filter bar** (below header, `mt-6`):
+```
+[All]  [Active]  [Locked]  [Closed]  [Superseded]
+```
+Horizontal pill filters, same pattern as the brief feed. Counts shown in parentheses on each pill: `Active (3)`.
+
+**Proposal rows** — row layout, not cards. One row per proposal:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  Wedding Reception  ·  Hyderabad     ●  Active        →  │
+│  ₹6,50,000  starting from  ·  Submitted 2 days ago       │
+│  Brief deadline: 4 days left                             │
+└──────────────────────────────────────────────────────────┘
+```
+
+- First line: brief event type + city, status badge right-aligned, chevron
+- Second line: own price + relative submitted timestamp — `text-sm text-muted-foreground`
+- Third line: brief deadline — `text-xs text-muted-foreground`. When status is `locked` or `closed`, this line shows the outcome instead: "You won this brief" or "Another venue was selected"
+- Row is fully clickable — navigates to the read-only brief view with the proposal panel expanded
+- `border-b border-border` between rows, same as other lists
+
+Status badge palette extends the four-state set from §7:
+- Active: `bg-accent text-accent-foreground`
+- Locked (won): `bg-primary/15 text-primary` — the one place a slightly stronger fill is acceptable because winning is the signal moment
+- Closed (lost): `bg-muted text-muted-foreground`
+- Superseded: `bg-muted/60 text-muted-foreground` — visually quieter than closed; this is an archival state, not an outcome
+
+**Empty state** when no proposals exist yet:
+```
+           [icon: paper-plane]
+       You haven't submitted any proposals yet
+  Open briefs matching your venue will appear in your feed.
+              [View brief feed]
+```
 
 ---
 
@@ -738,7 +828,11 @@ Nothing else moves, scales, or slides on inner pages. No `transform`, no `scale`
 Every list row is fully clickable — no "View" button inside a row. The entire row is the target.
 
 ```tsx
-<Link to={`/brief/${brief.id}`} className="block hover:bg-muted/50 transition-colors duration-150">
+<Link
+  to="/host/briefs/$briefId"
+  params={{ briefId: brief.id }}
+  className="block hover:bg-muted/50 transition-colors duration-150"
+>
   {/* row content */}
 </Link>
 ```
