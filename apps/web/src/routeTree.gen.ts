@@ -9,38 +9,100 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PublicRouteRouteImport } from './routes/_public/route'
+import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as AppVenueRouteRouteImport } from './routes/_app/venue/route'
+import { Route as AppHostRouteRouteImport } from './routes/_app/host/route'
 
+const PublicRouteRoute = PublicRouteRouteImport.update({
+  id: '/_public',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRouteRoute = AppRouteRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PublicLoginRoute = PublicLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const AppVenueRouteRoute = AppVenueRouteRouteImport.update({
+  id: '/venue',
+  path: '/venue',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppHostRouteRoute = AppHostRouteRouteImport.update({
+  id: '/host',
+  path: '/host',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/host': typeof AppHostRouteRoute
+  '/venue': typeof AppVenueRouteRoute
+  '/login': typeof PublicLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/host': typeof AppHostRouteRoute
+  '/venue': typeof AppVenueRouteRoute
+  '/login': typeof PublicLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteRouteWithChildren
+  '/_public': typeof PublicRouteRouteWithChildren
+  '/_app/host': typeof AppHostRouteRoute
+  '/_app/venue': typeof AppVenueRouteRoute
+  '/_public/login': typeof PublicLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/host' | '/venue' | '/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/host' | '/venue' | '/login'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_public'
+    | '/_app/host'
+    | '/_app/venue'
+    | '/_public/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRouteRoute: typeof AppRouteRouteWithChildren
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PublicRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +110,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_public/login': {
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicLoginRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_app/venue': {
+      id: '/_app/venue'
+      path: '/venue'
+      fullPath: '/venue'
+      preLoaderRoute: typeof AppVenueRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/host': {
+      id: '/_app/host'
+      path: '/host'
+      fullPath: '/host'
+      preLoaderRoute: typeof AppHostRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
+interface AppRouteRouteChildren {
+  AppHostRouteRoute: typeof AppHostRouteRoute
+  AppVenueRouteRoute: typeof AppVenueRouteRoute
+}
+
+const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppHostRouteRoute: AppHostRouteRoute,
+  AppVenueRouteRoute: AppVenueRouteRoute,
+}
+
+const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
+  AppRouteRouteChildren,
+)
+
+interface PublicRouteRouteChildren {
+  PublicLoginRoute: typeof PublicLoginRoute
+}
+
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicLoginRoute: PublicLoginRoute,
+}
+
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRouteRoute: AppRouteRouteWithChildren,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
