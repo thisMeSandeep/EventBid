@@ -8,7 +8,12 @@ export const Route = createFileRoute('/_app')({
     if (!user) {
       throw redirect({ to: '/login', search: { next: location.href } })
     }
-    return { user }
+    // First-time users (email or Google) have no role yet — funnel them to
+    // role selection before they can reach the app.
+    if (!user.role) {
+      throw redirect({ to: '/onboarding/role' })
+    }
+    return { user: { ...user, role: user.role } }
   },
   component: AppShell,
 })

@@ -1,6 +1,5 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
-import { admin } from "better-auth/plugins";
 import { db } from "../db/client";
 import * as schema from "../db/schema";
 import { env } from "./env";
@@ -22,7 +21,17 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
   },
-  plugins: [admin()],
+  user: {
+    additionalFields: {
+      // Set after sign-up via the dedicated role-selection step (POST /auth/role),
+      // so it is intentionally optional here — accounts are created without a role.
+      role: {
+        type: "string",
+        required: false,
+        input: false,
+      },
+    },
+  },
   socialProviders: {
     google: {
       clientId: env.GOOGLE_CLIENT_ID,

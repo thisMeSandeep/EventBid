@@ -8,7 +8,7 @@ export interface SessionUser {
   id: string
   name: string
   email: string
-  role: 'host' | 'venue_rep'
+  role: 'host' | 'venue_rep' | null
 }
 
 export const fetchMe = createServerFn({ method: 'GET' }).handler(

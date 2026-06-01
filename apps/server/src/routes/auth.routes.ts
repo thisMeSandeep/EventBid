@@ -29,9 +29,8 @@ authRoutes.get("/auth/me", async (c) => {
 
 const registerSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8),
-  role: z.enum(["host", "venue_rep"]),
 });
 
 authRoutes.post("/auth/register", async (c) => {
@@ -44,10 +43,11 @@ authRoutes.post("/auth/register", async (c) => {
     );
   }
 
-  const { name, email, password, role } = parsed.data;
+  const { name, email, password } = parsed.data;
 
   let signUpResponse: Response;
   try {
+    // Account is created without a role; the user picks one next via POST /auth/role.
     signUpResponse = await auth.api.signUpEmail({
       body: { name, email, password },
       asResponse: true,
@@ -69,18 +69,43 @@ authRoutes.post("/auth/register", async (c) => {
     throw new AppError("VALIDATION_ERROR", errBody?.message ?? "Registration failed");
   }
 
-  const data = (await signUpResponse.clone().json()) as { user?: { id?: string } };
-  const userId = data.user?.id;
-  if (!userId) {
-    logger.error({ data }, "signUp succeeded but no user.id in response");
-    throw new AppError("INTERNAL_ERROR", "Registration succeeded but user id missing");
-  }
-
-  await db.execute(sql`UPDATE "user" SET role = ${role} WHERE id = ${userId}`);
-  logger.info({ userId, role }, "User registered with role");
+  logger.info({ email }, "User registered");
 
   // Forward the original response (carries Set-Cookie for the session)
   return signUpResponse;
+});
+
+const roleSchema = z.object({
+  role: z.enum(["host", "venue_rep"]),
+});
+
+// One-time role assignment for the authenticated user. Roles cannot be changed
+// once set, so this is a no-op-with-409 if the user already has a role.
+authRoutes.post("/auth/role", async (c) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+  if (!session) return c.json({ error: { code: "UNAUTHORIZED" } }, 401);
+
+  const body = await c.req.json().catch(() => null);
+  const parsed = roleSchema.safeParse(body);
+  if (!parsed.success) {
+    return c.json(
+      { error: { code: "VALIDATION_ERROR", message: parsed.error.issues[0]?.message } },
+      422,
+    );
+  }
+
+  if (session.user.role) {
+    return c.json(
+      { error: { code: "ROLE_ALREADY_SET", message: "Role has already been set" } },
+      409,
+    );
+  }
+
+  const { role } = parsed.data;
+  await db.execute(sql`UPDATE "user" SET role = ${role} WHERE id = ${session.user.id}`);
+  logger.info({ userId: session.user.id, role }, "User role set");
+
+  return c.json({ role });
 });
 
 // --- Better Auth catch-all LAST ---

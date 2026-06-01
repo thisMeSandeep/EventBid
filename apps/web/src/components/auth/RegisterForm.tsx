@@ -4,15 +4,12 @@ import { useRouter } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { apiClient } from '#/lib/api-client'
+import { authClient } from '#/lib/auth-client'
 import { qk } from '#/lib/query-keys'
-import { env } from '#/lib/env'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { Separator } from '#/components/ui/separator'
-import { RoleSelector } from './RoleSelector'
-
-type Role = 'host' | 'venue_rep'
 
 const nameSchema = z.string().min(1, 'Name is required')
 const emailSchema = z.email('Enter a valid email address')
@@ -23,13 +20,13 @@ export function RegisterForm() {
   const router = useRouter()
 
   const registerMutation = useMutation({
-    mutationFn: (values: { name: string; email: string; password: string; role: Role }) =>
+    mutationFn: (values: { name: string; email: string; password: string }) =>
       apiClient.post<{ user: { id: string } }>('/api/auth/register', values),
-    onSuccess: async (_, variables) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: qk.me })
       await router.invalidate()
-      const home = variables.role === 'venue_rep' ? '/venue/feed' : '/host/briefs'
-      router.navigate({ to: home })
+      // Account created — next step is choosing a role.
+      router.navigate({ to: '/onboarding/role' })
     },
     onError: (err) => {
       const message = err instanceof Error ? err.message : 'Something went wrong'
@@ -38,10 +35,9 @@ export function RegisterForm() {
   })
 
   const form = useForm({
-    defaultValues: { name: '', email: '', password: '', role: '' as Role | '' },
+    defaultValues: { name: '', email: '', password: '' },
     onSubmit: ({ value }) => {
-      if (!value.role) return
-      registerMutation.mutate(value as { name: string; email: string; password: string; role: Role })
+      registerMutation.mutate(value)
     },
   })
 
@@ -69,30 +65,6 @@ export function RegisterForm() {
             form.handleSubmit()
           }}
         >
-          {/* Role selector */}
-          <form.Field
-            name="role"
-            validators={{
-              onSubmit: ({ value }) =>
-                value ? undefined : 'Please select how you want to use EventBid',
-            }}
-          >
-            {(field) => (
-              <div className="space-y-2">
-                <Label>I want to</Label>
-                <RoleSelector
-                  value={field.state.value}
-                  onChange={(role) => field.handleChange(role)}
-                />
-                {field.state.meta.errors.length > 0 && (
-                  <p className="text-destructive text-xs">
-                    {field.state.meta.errors.filter(Boolean).join(', ')}
-                  </p>
-                )}
-              </div>
-            )}
-          </form.Field>
-
           {/* Name */}
           <form.Field
             name="name"
@@ -202,8 +174,11 @@ export function RegisterForm() {
           <span className="text-xs text-muted-foreground">or</span>
           <Separator className="flex-1" />
         </div>
-        <a
-          href={`${env.VITE_API_URL}/api/auth/google`}
+        <button
+          type="button"
+          onClick={() =>
+            authClient.signIn.social({ provider: 'google', callbackURL: '/onboarding/role' })
+          }
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted/50"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
@@ -230,7 +205,7 @@ export function RegisterForm() {
             />
           </svg>
           Continue with Google
-        </a>
+        </button>
 
         {/* Switch to login */}
         <p className="mt-6 text-center text-sm text-muted-foreground">

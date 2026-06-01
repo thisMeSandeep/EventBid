@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OnboardingRoleRouteImport } from './routes/onboarding/role'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as AppVenueRouteRouteImport } from './routes/_app/venue/route'
@@ -28,6 +29,11 @@ const AppRouteRoute = AppRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoleRoute = OnboardingRoleRouteImport.update({
+  id: '/onboarding/role',
+  path: '/onboarding/role',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublicRegisterRoute = PublicRegisterRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/venue': typeof AppVenueRouteRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/onboarding/role': typeof OnboardingRoleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByTo {
   '/venue': typeof AppVenueRouteRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/onboarding/role': typeof OnboardingRoleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -74,12 +82,19 @@ export interface FileRoutesById {
   '/_app/venue': typeof AppVenueRouteRoute
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
+  '/onboarding/role': typeof OnboardingRoleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/host' | '/venue' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | '/host'
+    | '/venue'
+    | '/login'
+    | '/register'
+    | '/onboarding/role'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/host' | '/venue' | '/login' | '/register'
+  to: '/' | '/host' | '/venue' | '/login' | '/register' | '/onboarding/role'
   id:
     | '__root__'
     | '/'
@@ -89,12 +104,14 @@ export interface FileRouteTypes {
     | '/_app/venue'
     | '/_public/login'
     | '/_public/register'
+    | '/onboarding/role'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRouteRoute: typeof AppRouteRouteWithChildren
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
+  OnboardingRoleRoute: typeof OnboardingRoleRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -118,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/role': {
+      id: '/onboarding/role'
+      path: '/onboarding/role'
+      fullPath: '/onboarding/role'
+      preLoaderRoute: typeof OnboardingRoleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_public/register': {
@@ -183,6 +207,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRouteRoute: AppRouteRouteWithChildren,
   PublicRouteRoute: PublicRouteRouteWithChildren,
+  OnboardingRoleRoute: OnboardingRoleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
