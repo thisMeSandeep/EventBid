@@ -738,7 +738,7 @@ The venue rep can manage their profile, see matched briefs, and submit proposals
 
 ---
 
-### Step 26 — Photo uploader
+### Step 26 — Photo uploader  [x]
 
 **Files to create:**
 

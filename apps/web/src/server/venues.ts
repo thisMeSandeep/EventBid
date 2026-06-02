@@ -1,7 +1,15 @@
 import { queryOptions } from '@tanstack/react-query'
-import type { Brief, BriefVenueMatch, UpdateVenueDto, Venue } from '@eventbid/shared'
+import type {
+  Brief,
+  BriefVenueMatch,
+  UpdateVenueDto,
+  Venue,
+  VenuePhoto,
+} from '@eventbid/shared'
 import { apiClient, ApiError } from '#/lib/api-client'
 import { qk } from '#/lib/query-keys'
+
+export type VenueWithPhotos = Venue & { photos: VenuePhoto[] }
 
 export type FeedMatch = BriefVenueMatch & { brief: Brief }
 
@@ -13,9 +21,9 @@ export interface FeedPage {
 // Returns null when the venue rep hasn't created a profile yet (404).
 export const venueMeQuery = queryOptions({
   queryKey: qk.venues.me,
-  queryFn: async (): Promise<Venue | null> => {
+  queryFn: async (): Promise<VenueWithPhotos | null> => {
     try {
-      return await apiClient.get<Venue>('/api/venues/me')
+      return await apiClient.get<VenueWithPhotos>('/api/venues/me')
     } catch (err) {
       if (err instanceof ApiError && err.status === 404) return null
       throw err
@@ -26,7 +34,7 @@ export const venueMeQuery = queryOptions({
 export const venueByIdQuery = (id: string) =>
   queryOptions({
     queryKey: qk.venues.byId(id),
-    queryFn: () => apiClient.get<Venue>(`/api/venues/${id}`),
+    queryFn: () => apiClient.get<VenueWithPhotos>(`/api/venues/${id}`),
   })
 
 interface FeedParams {
@@ -48,3 +56,16 @@ export const feedQuery = (params: FeedParams = {}) =>
 // Mutation helper — called client-side from a useMutation (Step 24).
 export const updateVenue = (body: UpdateVenueDto) =>
   apiClient.put<Venue>('/api/venues/me', body)
+
+// Photo mutation helpers — called client-side (Step 26).
+export const uploadVenuePhoto = (file: File) => {
+  const form = new FormData()
+  form.append('file', file)
+  return apiClient.upload<Pick<VenuePhoto, 'id' | 'url'>>(
+    '/api/venues/me/photos',
+    form,
+  )
+}
+
+export const deleteVenuePhoto = (photoId: string) =>
+  apiClient.delete<void>(`/api/venues/me/photos/${photoId}`)

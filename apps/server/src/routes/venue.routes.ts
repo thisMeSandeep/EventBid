@@ -27,7 +27,9 @@ venueRoutes.get("/me", requireAuth, requireRole("venue_rep"), async (c) => {
     throw new AppError("NOT_FOUND", "Venue profile not found");
   }
 
-  return c.json(venue);
+  const photos = await repositories.venues.findPhotosByVenueId(venue.id);
+
+  return c.json({ ...venue, photos });
 });
 
 // PUT /venues/me — create or update profile; re-embed when matchable fields change
@@ -102,7 +104,9 @@ venueRoutes.get("/:id", async (c) => {
     throw new AppError("NOT_FOUND", "Venue not found");
   }
 
-  return c.json(venue);
+  const photos = await repositories.venues.findPhotosByVenueId(venue.id);
+
+  return c.json({ ...venue, photos });
 });
 
 // POST /venues/me/photos — upload a venue photo (JPEG/PNG/WebP, max 5 MB)

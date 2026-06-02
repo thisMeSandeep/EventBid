@@ -96,7 +96,12 @@ export function VenueProfileForm({ venue }: { venue: Venue | null }) {
       toast.error(err instanceof Error ? err.message : 'Failed to save profile')
     },
     onSuccess: (saved) => {
-      queryClient.setQueryData(qk.venues.me, saved)
+      // Preserve photos — the PUT /venues/me response doesn't include them.
+      const existing = queryClient.getQueryData<Venue & { photos?: unknown }>(qk.venues.me)
+      queryClient.setQueryData(qk.venues.me, {
+        ...saved,
+        photos: existing?.photos ?? [],
+      })
       toast.success('Profile saved')
     },
     onSettled: () => {
