@@ -18,11 +18,15 @@ import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as AppVenueRouteRouteImport } from './routes/_app/venue/route'
 import { Route as AppHostRouteRouteImport } from './routes/_app/host/route'
 import { Route as AppVenueProfileRouteImport } from './routes/_app/venue/profile'
+import { Route as AppVenueFeedRouteImport } from './routes/_app/venue/feed'
 import { Route as AppVenueVenueIdRouteImport } from './routes/_app/venue/$venueId'
 import { Route as AppHostBriefsIndexRouteImport } from './routes/_app/host/briefs/index'
 import { Route as AppHostBriefsNewRouteImport } from './routes/_app/host/briefs/new'
+import { Route as AppVenueBriefsBriefIdRouteRouteImport } from './routes/_app/venue/briefs/$briefId/route'
 import { Route as AppHostBriefsBriefIdRouteRouteImport } from './routes/_app/host/briefs/$briefId/route'
+import { Route as AppVenueBriefsBriefIdIndexRouteImport } from './routes/_app/venue/briefs/$briefId/index'
 import { Route as AppHostBriefsBriefIdIndexRouteImport } from './routes/_app/host/briefs/$briefId/index'
+import { Route as AppVenueBriefsBriefIdProposeRouteImport } from './routes/_app/venue/briefs/$briefId/propose'
 import { Route as AppHostBriefsBriefIdEditRouteImport } from './routes/_app/host/briefs/$briefId/edit'
 
 const PublicRouteRoute = PublicRouteRouteImport.update({
@@ -68,6 +72,11 @@ const AppVenueProfileRoute = AppVenueProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppVenueRouteRoute,
 } as any)
+const AppVenueFeedRoute = AppVenueFeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => AppVenueRouteRoute,
+} as any)
 const AppVenueVenueIdRoute = AppVenueVenueIdRouteImport.update({
   id: '/$venueId',
   path: '/$venueId',
@@ -83,17 +92,35 @@ const AppHostBriefsNewRoute = AppHostBriefsNewRouteImport.update({
   path: '/briefs/new',
   getParentRoute: () => AppHostRouteRoute,
 } as any)
+const AppVenueBriefsBriefIdRouteRoute =
+  AppVenueBriefsBriefIdRouteRouteImport.update({
+    id: '/briefs/$briefId',
+    path: '/briefs/$briefId',
+    getParentRoute: () => AppVenueRouteRoute,
+  } as any)
 const AppHostBriefsBriefIdRouteRoute =
   AppHostBriefsBriefIdRouteRouteImport.update({
     id: '/briefs/$briefId',
     path: '/briefs/$briefId',
     getParentRoute: () => AppHostRouteRoute,
   } as any)
+const AppVenueBriefsBriefIdIndexRoute =
+  AppVenueBriefsBriefIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppVenueBriefsBriefIdRouteRoute,
+  } as any)
 const AppHostBriefsBriefIdIndexRoute =
   AppHostBriefsBriefIdIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => AppHostBriefsBriefIdRouteRoute,
+  } as any)
+const AppVenueBriefsBriefIdProposeRoute =
+  AppVenueBriefsBriefIdProposeRouteImport.update({
+    id: '/propose',
+    path: '/propose',
+    getParentRoute: () => AppVenueBriefsBriefIdRouteRoute,
   } as any)
 const AppHostBriefsBriefIdEditRoute =
   AppHostBriefsBriefIdEditRouteImport.update({
@@ -110,12 +137,16 @@ export interface FileRoutesByFullPath {
   '/register': typeof PublicRegisterRoute
   '/onboarding/role': typeof OnboardingRoleRoute
   '/venue/$venueId': typeof AppVenueVenueIdRoute
+  '/venue/feed': typeof AppVenueFeedRoute
   '/venue/profile': typeof AppVenueProfileRoute
   '/host/briefs/$briefId': typeof AppHostBriefsBriefIdRouteRouteWithChildren
+  '/venue/briefs/$briefId': typeof AppVenueBriefsBriefIdRouteRouteWithChildren
   '/host/briefs/new': typeof AppHostBriefsNewRoute
   '/host/briefs/': typeof AppHostBriefsIndexRoute
   '/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
+  '/venue/briefs/$briefId/propose': typeof AppVenueBriefsBriefIdProposeRoute
   '/host/briefs/$briefId/': typeof AppHostBriefsBriefIdIndexRoute
+  '/venue/briefs/$briefId/': typeof AppVenueBriefsBriefIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -125,11 +156,14 @@ export interface FileRoutesByTo {
   '/register': typeof PublicRegisterRoute
   '/onboarding/role': typeof OnboardingRoleRoute
   '/venue/$venueId': typeof AppVenueVenueIdRoute
+  '/venue/feed': typeof AppVenueFeedRoute
   '/venue/profile': typeof AppVenueProfileRoute
   '/host/briefs/new': typeof AppHostBriefsNewRoute
   '/host/briefs': typeof AppHostBriefsIndexRoute
   '/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
+  '/venue/briefs/$briefId/propose': typeof AppVenueBriefsBriefIdProposeRoute
   '/host/briefs/$briefId': typeof AppHostBriefsBriefIdIndexRoute
+  '/venue/briefs/$briefId': typeof AppVenueBriefsBriefIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -142,12 +176,16 @@ export interface FileRoutesById {
   '/_public/register': typeof PublicRegisterRoute
   '/onboarding/role': typeof OnboardingRoleRoute
   '/_app/venue/$venueId': typeof AppVenueVenueIdRoute
+  '/_app/venue/feed': typeof AppVenueFeedRoute
   '/_app/venue/profile': typeof AppVenueProfileRoute
   '/_app/host/briefs/$briefId': typeof AppHostBriefsBriefIdRouteRouteWithChildren
+  '/_app/venue/briefs/$briefId': typeof AppVenueBriefsBriefIdRouteRouteWithChildren
   '/_app/host/briefs/new': typeof AppHostBriefsNewRoute
   '/_app/host/briefs/': typeof AppHostBriefsIndexRoute
   '/_app/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
+  '/_app/venue/briefs/$briefId/propose': typeof AppVenueBriefsBriefIdProposeRoute
   '/_app/host/briefs/$briefId/': typeof AppHostBriefsBriefIdIndexRoute
+  '/_app/venue/briefs/$briefId/': typeof AppVenueBriefsBriefIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -159,12 +197,16 @@ export interface FileRouteTypes {
     | '/register'
     | '/onboarding/role'
     | '/venue/$venueId'
+    | '/venue/feed'
     | '/venue/profile'
     | '/host/briefs/$briefId'
+    | '/venue/briefs/$briefId'
     | '/host/briefs/new'
     | '/host/briefs/'
     | '/host/briefs/$briefId/edit'
+    | '/venue/briefs/$briefId/propose'
     | '/host/briefs/$briefId/'
+    | '/venue/briefs/$briefId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -174,11 +216,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/onboarding/role'
     | '/venue/$venueId'
+    | '/venue/feed'
     | '/venue/profile'
     | '/host/briefs/new'
     | '/host/briefs'
     | '/host/briefs/$briefId/edit'
+    | '/venue/briefs/$briefId/propose'
     | '/host/briefs/$briefId'
+    | '/venue/briefs/$briefId'
   id:
     | '__root__'
     | '/'
@@ -190,12 +235,16 @@ export interface FileRouteTypes {
     | '/_public/register'
     | '/onboarding/role'
     | '/_app/venue/$venueId'
+    | '/_app/venue/feed'
     | '/_app/venue/profile'
     | '/_app/host/briefs/$briefId'
+    | '/_app/venue/briefs/$briefId'
     | '/_app/host/briefs/new'
     | '/_app/host/briefs/'
     | '/_app/host/briefs/$briefId/edit'
+    | '/_app/venue/briefs/$briefId/propose'
     | '/_app/host/briefs/$briefId/'
+    | '/_app/venue/briefs/$briefId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -270,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppVenueProfileRouteImport
       parentRoute: typeof AppVenueRouteRoute
     }
+    '/_app/venue/feed': {
+      id: '/_app/venue/feed'
+      path: '/feed'
+      fullPath: '/venue/feed'
+      preLoaderRoute: typeof AppVenueFeedRouteImport
+      parentRoute: typeof AppVenueRouteRoute
+    }
     '/_app/venue/$venueId': {
       id: '/_app/venue/$venueId'
       path: '/$venueId'
@@ -291,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHostBriefsNewRouteImport
       parentRoute: typeof AppHostRouteRoute
     }
+    '/_app/venue/briefs/$briefId': {
+      id: '/_app/venue/briefs/$briefId'
+      path: '/briefs/$briefId'
+      fullPath: '/venue/briefs/$briefId'
+      preLoaderRoute: typeof AppVenueBriefsBriefIdRouteRouteImport
+      parentRoute: typeof AppVenueRouteRoute
+    }
     '/_app/host/briefs/$briefId': {
       id: '/_app/host/briefs/$briefId'
       path: '/briefs/$briefId'
@@ -298,12 +361,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHostBriefsBriefIdRouteRouteImport
       parentRoute: typeof AppHostRouteRoute
     }
+    '/_app/venue/briefs/$briefId/': {
+      id: '/_app/venue/briefs/$briefId/'
+      path: '/'
+      fullPath: '/venue/briefs/$briefId/'
+      preLoaderRoute: typeof AppVenueBriefsBriefIdIndexRouteImport
+      parentRoute: typeof AppVenueBriefsBriefIdRouteRoute
+    }
     '/_app/host/briefs/$briefId/': {
       id: '/_app/host/briefs/$briefId/'
       path: '/'
       fullPath: '/host/briefs/$briefId/'
       preLoaderRoute: typeof AppHostBriefsBriefIdIndexRouteImport
       parentRoute: typeof AppHostBriefsBriefIdRouteRoute
+    }
+    '/_app/venue/briefs/$briefId/propose': {
+      id: '/_app/venue/briefs/$briefId/propose'
+      path: '/propose'
+      fullPath: '/venue/briefs/$briefId/propose'
+      preLoaderRoute: typeof AppVenueBriefsBriefIdProposeRouteImport
+      parentRoute: typeof AppVenueBriefsBriefIdRouteRoute
     }
     '/_app/host/briefs/$briefId/edit': {
       id: '/_app/host/briefs/$briefId/edit'
@@ -347,14 +424,34 @@ const AppHostRouteRouteWithChildren = AppHostRouteRoute._addFileChildren(
   AppHostRouteRouteChildren,
 )
 
+interface AppVenueBriefsBriefIdRouteRouteChildren {
+  AppVenueBriefsBriefIdProposeRoute: typeof AppVenueBriefsBriefIdProposeRoute
+  AppVenueBriefsBriefIdIndexRoute: typeof AppVenueBriefsBriefIdIndexRoute
+}
+
+const AppVenueBriefsBriefIdRouteRouteChildren: AppVenueBriefsBriefIdRouteRouteChildren =
+  {
+    AppVenueBriefsBriefIdProposeRoute: AppVenueBriefsBriefIdProposeRoute,
+    AppVenueBriefsBriefIdIndexRoute: AppVenueBriefsBriefIdIndexRoute,
+  }
+
+const AppVenueBriefsBriefIdRouteRouteWithChildren =
+  AppVenueBriefsBriefIdRouteRoute._addFileChildren(
+    AppVenueBriefsBriefIdRouteRouteChildren,
+  )
+
 interface AppVenueRouteRouteChildren {
   AppVenueVenueIdRoute: typeof AppVenueVenueIdRoute
+  AppVenueFeedRoute: typeof AppVenueFeedRoute
   AppVenueProfileRoute: typeof AppVenueProfileRoute
+  AppVenueBriefsBriefIdRouteRoute: typeof AppVenueBriefsBriefIdRouteRouteWithChildren
 }
 
 const AppVenueRouteRouteChildren: AppVenueRouteRouteChildren = {
   AppVenueVenueIdRoute: AppVenueVenueIdRoute,
+  AppVenueFeedRoute: AppVenueFeedRoute,
   AppVenueProfileRoute: AppVenueProfileRoute,
+  AppVenueBriefsBriefIdRouteRoute: AppVenueBriefsBriefIdRouteRouteWithChildren,
 }
 
 const AppVenueRouteRouteWithChildren = AppVenueRouteRoute._addFileChildren(

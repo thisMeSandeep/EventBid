@@ -47,6 +47,24 @@ export class BriefVenueMatchRepository {
     }));
   }
 
+  async findByBriefAndVenue(
+    briefId: string,
+    venueId: string,
+  ): Promise<BriefVenueMatch | null> {
+    const rows = await this.db
+      .select()
+      .from(briefVenueMatches)
+      .where(
+        and(
+          eq(briefVenueMatches.briefId, briefId),
+          eq(briefVenueMatches.venueId, venueId),
+        ),
+      )
+      .limit(1);
+
+    return rows[0] ?? null;
+  }
+
   async findByBriefId(briefId: string): Promise<BriefVenueMatch[]> {
     return this.db
       .select()

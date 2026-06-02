@@ -765,7 +765,7 @@ The venue rep can manage their profile, see matched briefs, and submit proposals
 
 ---
 
-### Step 27 — `/venue/feed` matched briefs
+### Step 27 — `/venue/feed` matched briefs  [x]
 
 **Files to create:**
 
@@ -789,7 +789,7 @@ The venue rep can manage their profile, see matched briefs, and submit proposals
 
 ---
 
-### Step 28 — `/venue/briefs/$briefId` read view + propose page
+### Step 28 — `/venue/briefs/$briefId` read view + propose page  [x]
 
 **Files to create:**
 

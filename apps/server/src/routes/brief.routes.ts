@@ -69,10 +69,34 @@ briefRoutes.get("/", requireAuth, requireRole("host"), async (c) => {
   });
 });
 
-// GET /briefs/:id — brief detail (host must own the brief)
-briefRoutes.get("/:id", requireAuth, requireRole("host"), async (c) => {
+// GET /briefs/:id — brief detail (host owner, or a venue rep matched to it)
+briefRoutes.get("/:id", requireAuth, async (c) => {
   const user = c.get("user");
-  const brief = await requireOwnedBrief(c.req.param("id"), user.id);
+  const briefId = c.req.param("id");
+
+  if (user.role === "venue_rep") {
+    const venue = await repositories.venues.findByUserId(user.id);
+    if (!venue) {
+      throw new AppError("NOT_FOUND", "Venue profile not found");
+    }
+
+    const match = await repositories.briefVenueMatches.findByBriefAndVenue(
+      briefId,
+      venue.id,
+    );
+    if (!match) {
+      throw new AppError("FORBIDDEN", "Brief is not matched to your venue");
+    }
+
+    const brief = await repositories.briefs.findById(briefId);
+    if (!brief) {
+      throw new AppError("NOT_FOUND", "Brief not found");
+    }
+
+    return c.json(brief);
+  }
+
+  const brief = await requireOwnedBrief(briefId, user.id);
 
   return c.json(brief);
 });
