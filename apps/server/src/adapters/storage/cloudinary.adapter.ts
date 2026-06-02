@@ -7,6 +7,11 @@ type CloudinaryResourceType = "image" | "video" | "raw";
 
 const EXTENSION_PATTERN = /\.[^/.]+$/;
 
+// Root folder all EventBid assets live under in Cloudinary. Keeping it as a
+// prefix on the public_id (rather than only the stored key) means uploads nest
+// correctly in both fixed-folder and dynamic-folder accounts.
+const ROOT_FOLDER = "event_bid";
+
 function resourceTypeFromContentType(contentType: string): CloudinaryResourceType {
   if (contentType.startsWith("image/")) {
     return "image";
@@ -20,11 +25,13 @@ function resourceTypeFromContentType(contentType: string): CloudinaryResourceTyp
 }
 
 function publicIdFromKey(key: string, resourceType: CloudinaryResourceType): string {
-  if (resourceType === "raw") {
-    return key;
-  }
+  const withoutExt = resourceType === "raw" ? key : key.replace(EXTENSION_PATTERN, "");
+  return `${ROOT_FOLDER}/${withoutExt}`;
+}
 
-  return key.replace(EXTENSION_PATTERN, "");
+// The Cloudinary folder an asset belongs to: the public_id minus its last segment.
+function assetFolderFromPublicId(publicId: string): string {
+  return publicId.split("/").slice(0, -1).join("/");
 }
 
 export class CloudinaryStorageAdapter implements StorageAdapter {
@@ -49,6 +56,7 @@ export class CloudinaryStorageAdapter implements StorageAdapter {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           public_id: publicId,
+          asset_folder: assetFolderFromPublicId(publicId),
           resource_type: resourceType,
           overwrite: true,
         },
