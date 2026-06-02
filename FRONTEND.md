@@ -719,7 +719,7 @@ The venue rep can manage their profile, see matched briefs, and submit proposals
 
 ---
 
-### Step 25 — Public venue page
+### Step 25 — Public venue page  [x]
 
 **Files to create:**
 

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { Check } from 'lucide-react'
 import type { ProposalWithVenue } from '#/server/briefs'
 import { Button } from '#/components/ui/button'
@@ -36,7 +37,13 @@ export function ProposalCard({ proposal, briefId, canAccept }: ProposalCardProps
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-medium text-foreground">{proposal.venueName}</h3>
+          <Link
+            to="/venue/$venueId"
+            params={{ venueId: proposal.venueId }}
+            className="text-sm font-medium text-foreground hover:underline"
+          >
+            {proposal.venueName}
+          </Link>
           <p className="text-xs text-muted-foreground">{proposal.venueCity}</p>
         </div>
         {isLocked && (
