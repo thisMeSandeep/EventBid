@@ -5,6 +5,7 @@ import { eventTypes } from '@eventbid/shared'
 import { feedQuery } from '#/server/venues'
 import { FeedRow } from '#/components/venue/FeedRow'
 import { EmptyState } from '#/components/app/EmptyState'
+import { ListSkeleton } from '#/components/app/ListSkeleton'
 
 const searchSchema = z.object({
   cursor: z.string().optional(),
@@ -17,6 +18,17 @@ export const Route = createFileRoute('/_app/venue/feed')({
   loader: ({ context: { queryClient }, deps }) =>
     queryClient.ensureQueryData(feedQuery({ cursor: deps.cursor })),
   component: VenueFeedPage,
+  pendingComponent: () => (
+    <div className="mx-auto max-w-3xl px-6 py-8">
+      <h1 className="text-xl font-semibold text-foreground">Brief Feed</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Events looking for venues like yours
+      </p>
+      <div className="mt-8">
+        <ListSkeleton />
+      </div>
+    </div>
+  ),
 })
 
 const label = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)

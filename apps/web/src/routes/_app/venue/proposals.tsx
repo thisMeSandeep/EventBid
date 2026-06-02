@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { myProposalsQuery } from '#/server/proposals'
 import { MyProposalRow } from '#/components/proposal/MyProposalRow'
 import { EmptyState } from '#/components/app/EmptyState'
+import { ListSkeleton } from '#/components/app/ListSkeleton'
 
 const searchSchema = z.object({
   cursor: z.string().optional(),
@@ -16,6 +17,17 @@ export const Route = createFileRoute('/_app/venue/proposals')({
   loader: ({ context: { queryClient }, deps }) =>
     queryClient.ensureQueryData(myProposalsQuery({ cursor: deps.cursor })),
   component: MyProposalsPage,
+  pendingComponent: () => (
+    <div className="mx-auto max-w-5xl px-6 py-8">
+      <h1 className="text-xl font-semibold text-foreground">My Proposals</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Proposals you've submitted across all briefs
+      </p>
+      <div className="mt-8">
+        <ListSkeleton />
+      </div>
+    </div>
+  ),
 })
 
 const FILTERS: { value?: string; label: string }[] = [

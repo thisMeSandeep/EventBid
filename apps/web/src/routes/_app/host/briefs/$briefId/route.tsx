@@ -11,6 +11,11 @@ export const Route = createFileRoute('/_app/host/briefs/$briefId')({
       queryClient.ensureQueryData(proposalsQuery(briefId)),
       queryClient.ensureQueryData(analysisQuery(briefId)),
     ]),
+  // Delay the pending state so quick loads don't flash, and hold it briefly
+  // once shown. The header renders from SSR/cache on refresh, so the skeleton
+  // only appears on slow client-side navigation.
+  pendingMs: 200,
+  pendingMinMs: 400,
   component: BriefDetailLayout,
 })
 

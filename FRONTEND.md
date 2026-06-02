@@ -977,7 +977,7 @@ The handler map per `FRONTEND-ARCHITECTURE.md` §9. Each event subscribes to a p
 
 ---
 
-### Step 35 — Loading states
+### Step 35 — Loading states  [x]
 
 **Files to edit:**
 

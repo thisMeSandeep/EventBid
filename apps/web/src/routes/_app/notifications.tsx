@@ -10,6 +10,7 @@ import { useMarkAllRead } from '#/hooks/use-mutations/use-mark-all-read'
 import { notificationLabel } from '#/components/app/NotificationDropdown'
 import { targetFor } from '#/components/app/NotificationBell'
 import { EmptyState } from '#/components/app/EmptyState'
+import { ListSkeleton } from '#/components/app/ListSkeleton'
 import { Button } from '#/components/ui/button'
 
 const searchSchema = z.object({
@@ -22,6 +23,14 @@ export const Route = createFileRoute('/_app/notifications')({
   loader: ({ context: { queryClient }, deps }) =>
     queryClient.ensureQueryData(notificationsAllQuery(deps.cursor)),
   component: NotificationsPage,
+  pendingComponent: () => (
+    <div className="mx-auto max-w-2xl px-6 py-8">
+      <h1 className="text-xl font-semibold text-foreground">Notifications</h1>
+      <div className="mt-8">
+        <ListSkeleton />
+      </div>
+    </div>
+  ),
 })
 
 function NotificationsPage() {

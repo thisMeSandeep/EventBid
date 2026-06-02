@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { briefsListQuery } from '#/server/briefs'
 import { BriefListRow } from '#/components/brief/BriefListRow'
 import { EmptyState } from '#/components/app/EmptyState'
+import { ListSkeleton } from '#/components/app/ListSkeleton'
 import { Button } from '#/components/ui/button'
 
 const searchSchema = z.object({
@@ -17,6 +18,14 @@ export const Route = createFileRoute('/_app/host/briefs/')({
   loader: ({ context: { queryClient }, deps }) =>
     queryClient.ensureQueryData(briefsListQuery({ cursor: deps.cursor })),
   component: HostBriefsPage,
+  pendingComponent: () => (
+    <div className="mx-auto max-w-3xl px-6 py-8">
+      <h1 className="text-xl font-semibold text-foreground">My Briefs</h1>
+      <div className="mt-8">
+        <ListSkeleton />
+      </div>
+    </div>
+  ),
 })
 
 const FILTERS: { value?: string; label: string }[] = [
