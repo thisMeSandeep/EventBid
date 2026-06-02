@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { meQuery } from '#/server/auth'
+import { sse } from '#/lib/sse'
 import { NavBar } from '#/components/app/NavBar'
 
 export const Route = createFileRoute('/_app')({
@@ -24,6 +26,14 @@ export const Route = createFileRoute('/_app')({
 
 function AppShell() {
   const { user } = Route.useRouteContext()
+
+  // One EventSource for the whole authenticated session. Lives at the layout
+  // level so it survives in-app navigation; closed on sign-out / unmount.
+  useEffect(() => {
+    sse.connect()
+    return () => sse.disconnect()
+  }, [])
+
   return (
     <div className="min-h-screen bg-background">
       <NavBar user={user} />

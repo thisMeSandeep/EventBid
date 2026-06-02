@@ -842,7 +842,7 @@ The app becomes live. SSE drives cache invalidation and the notification bell.
 
 ---
 
-### Step 30 — SSE manager + connect in shell
+### Step 30 — SSE manager + connect in shell  [x]
 
 **Files to create:**
 
