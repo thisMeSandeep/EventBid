@@ -923,7 +923,7 @@ The handler map per `FRONTEND-ARCHITECTURE.md` §9. Each event subscribes to a p
 
 ---
 
-### Step 33 — Notifications page
+### Step 33 — Notifications page  [x]
 
 **Files to create:**
 

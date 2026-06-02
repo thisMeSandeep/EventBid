@@ -14,7 +14,7 @@ import {
 import { NotificationDropdown } from './NotificationDropdown'
 
 // Resolves where a notification should take the user, based on their role.
-function targetFor(
+export function targetFor(
   n: Notification,
   role: SessionUser['role'],
 ): Parameters<ReturnType<typeof useRouter>['navigate']>[0] | null {

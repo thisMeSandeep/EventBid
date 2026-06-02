@@ -5,14 +5,15 @@ import type { AppEnv } from "../types/hono-env";
 
 export const notificationRoutes = new Hono<AppEnv>();
 
-// GET /notifications — cursor-paginated unread notifications
+// GET /notifications — cursor-paginated notifications.
+// Defaults to unread only (for the bell); pass ?all=true for the full list.
 notificationRoutes.get("/", requireAuth, async (c) => {
   const user = c.get("user");
   const cursor = c.req.query("cursor");
-  const notifications = await repositories.notifications.findUnreadByUserId(
-    user.id,
-    cursor,
-  );
+  const all = c.req.query("all") === "true";
+  const notifications = all
+    ? await repositories.notifications.findByUserId(user.id, cursor)
+    : await repositories.notifications.findUnreadByUserId(user.id, cursor);
 
   return c.json({
     data: notifications,

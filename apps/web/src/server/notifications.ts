@@ -8,7 +8,7 @@ export interface NotificationsPage {
   nextCursor: string | null
 }
 
-// The backend returns unread notifications, newest first.
+// Unread notifications, newest first — drives the bell.
 export const notificationsListQuery = (cursor?: string) =>
   queryOptions({
     queryKey: qk.notifications.list(cursor),
@@ -16,6 +16,17 @@ export const notificationsListQuery = (cursor?: string) =>
       apiClient.get<NotificationsPage>(
         `/api/notifications${cursor ? `?cursor=${cursor}` : ''}`,
       ),
+  })
+
+// Full list (read + unread) for the notifications page.
+export const notificationsAllQuery = (cursor?: string) =>
+  queryOptions({
+    queryKey: qk.notifications.all(cursor),
+    queryFn: () => {
+      const qs = new URLSearchParams({ all: 'true' })
+      if (cursor) qs.set('cursor', cursor)
+      return apiClient.get<NotificationsPage>(`/api/notifications?${qs.toString()}`)
+    },
   })
 
 // Mutation helpers — called client-side from useMutation.

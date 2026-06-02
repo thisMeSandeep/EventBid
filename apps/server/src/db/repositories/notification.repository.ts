@@ -37,6 +37,21 @@ export class NotificationRepository {
       .orderBy(desc(notifications.createdAt));
   }
 
+  async findByUserId(
+    userId: string,
+    cursor?: string,
+  ): Promise<Notification[]> {
+    const whereClause = cursor
+      ? and(eq(notifications.userId, userId), lt(notifications.id, cursor))
+      : eq(notifications.userId, userId);
+
+    return this.db
+      .select()
+      .from(notifications)
+      .where(whereClause)
+      .orderBy(desc(notifications.createdAt));
+  }
+
   async findAfter(userId: string, afterId: string): Promise<Notification[]> {
     const cursorRows = await this.db
       .select({ createdAt: notifications.createdAt })

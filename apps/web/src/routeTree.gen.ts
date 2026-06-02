@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as OnboardingRoleRouteImport } from './routes/onboarding/role'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as AppNotificationsRouteImport } from './routes/_app/notifications'
 import { Route as AppVenueRouteRouteImport } from './routes/_app/venue/route'
 import { Route as AppHostRouteRouteImport } from './routes/_app/host/route'
 import { Route as AppVenueProposalsRouteImport } from './routes/_app/venue/proposals'
@@ -57,6 +58,11 @@ const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicRouteRoute,
+} as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const AppVenueRouteRoute = AppVenueRouteRouteImport.update({
   id: '/venue',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/host': typeof AppHostRouteRouteWithChildren
   '/venue': typeof AppVenueRouteRouteWithChildren
+  '/notifications': typeof AppNotificationsRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
   '/onboarding/role': typeof OnboardingRoleRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/host': typeof AppHostRouteRouteWithChildren
   '/venue': typeof AppVenueRouteRouteWithChildren
+  '/notifications': typeof AppNotificationsRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
   '/onboarding/role': typeof OnboardingRoleRoute
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/_public': typeof PublicRouteRouteWithChildren
   '/_app/host': typeof AppHostRouteRouteWithChildren
   '/_app/venue': typeof AppVenueRouteRouteWithChildren
+  '/_app/notifications': typeof AppNotificationsRoute
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
   '/onboarding/role': typeof OnboardingRoleRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/'
     | '/host'
     | '/venue'
+    | '/notifications'
     | '/login'
     | '/register'
     | '/onboarding/role'
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/'
     | '/host'
     | '/venue'
+    | '/notifications'
     | '/login'
     | '/register'
     | '/onboarding/role'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/_public'
     | '/_app/host'
     | '/_app/venue'
+    | '/_app/notifications'
     | '/_public/login'
     | '/_public/register'
     | '/onboarding/role'
@@ -309,6 +321,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof PublicLoginRouteImport
       parentRoute: typeof PublicRouteRoute
+    }
+    '/_app/notifications': {
+      id: '/_app/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRouteRoute
     }
     '/_app/venue': {
       id: '/_app/venue'
@@ -482,11 +501,13 @@ const AppVenueRouteRouteWithChildren = AppVenueRouteRoute._addFileChildren(
 interface AppRouteRouteChildren {
   AppHostRouteRoute: typeof AppHostRouteRouteWithChildren
   AppVenueRouteRoute: typeof AppVenueRouteRouteWithChildren
+  AppNotificationsRoute: typeof AppNotificationsRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppHostRouteRoute: AppHostRouteRouteWithChildren,
   AppVenueRouteRoute: AppVenueRouteRouteWithChildren,
+  AppNotificationsRoute: AppNotificationsRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

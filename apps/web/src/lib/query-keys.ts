@@ -17,5 +17,6 @@ export const qk = {
   },
   notifications: {
     list: (cursor?: string) => ['notifications', cursor ?? null] as const,
+    all: (cursor?: string) => ['notifications', 'all', cursor ?? null] as const,
   },
 } as const
