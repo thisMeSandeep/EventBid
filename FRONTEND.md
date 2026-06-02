@@ -677,7 +677,7 @@ The venue rep can manage their profile, see matched briefs, and submit proposals
 
 ---
 
-### Step 23 — Venue server functions
+### Step 23 — Venue server functions  [x]
 
 **Files to create:**
 
@@ -696,7 +696,7 @@ The venue rep can manage their profile, see matched briefs, and submit proposals
 
 ---
 
-### Step 24 — Venue profile page (basic info + details)
+### Step 24 — Venue profile page (basic info + details)  [x]
 
 **Files to create:**
 
