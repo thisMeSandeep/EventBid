@@ -1,5 +1,16 @@
 import { env } from './env'
 
+// Decoupling shim: the API client can't import the router/query client without
+// a cycle, so a 401 is published on a tiny event bus. `_app/route.tsx`
+// subscribes and performs the cache clear + redirect to /login.
+export const UNAUTHORIZED_EVENT = 'eventbid:unauthorized'
+
+function notifyUnauthorized() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(UNAUTHORIZED_EVENT))
+  }
+}
+
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -27,7 +38,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const message = body?.error?.message ?? res.statusText
 
     if (res.status === 401) {
-      window.dispatchEvent(new CustomEvent('eventbid:unauthorized'))
+      notifyUnauthorized()
     }
 
     throw new ApiError(res.status, code, message)
@@ -59,6 +70,7 @@ export const apiClient = {
     }).then(async (res) => {
       if (!res.ok) {
         const body = await res.json().catch(() => null)
+        if (res.status === 401) notifyUnauthorized()
         throw new ApiError(
           res.status,
           body?.error?.code ?? 'UNKNOWN',

@@ -949,7 +949,7 @@ The handler map per `FRONTEND-ARCHITECTURE.md` §9. Each event subscribes to a p
 
 ---
 
-### Step 34 — Error handling
+### Step 34 — Error handling  [x]
 
 **Files to create:**
 

@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect, useRouter } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import { meQuery } from '#/server/auth'
 import { sse } from '#/lib/sse'
+import { UNAUTHORIZED_EVENT } from '#/lib/api-client'
 import { useSseInvalidations } from '#/hooks/use-sse-invalidations'
 import { NavBar } from '#/components/app/NavBar'
 
@@ -27,6 +29,8 @@ export const Route = createFileRoute('/_app')({
 
 function AppShell() {
   const { user } = Route.useRouteContext()
+  const queryClient = useQueryClient()
+  const router = useRouter()
 
   // One EventSource for the whole authenticated session. Lives at the layout
   // level so it survives in-app navigation; closed on sign-out / unmount.
@@ -34,6 +38,17 @@ function AppShell() {
     sse.connect()
     return () => sse.disconnect()
   }, [])
+
+  // A 401 anywhere in the app (published by the API client) clears the cache
+  // and bounces to /login.
+  useEffect(() => {
+    function onUnauthorized() {
+      queryClient.clear()
+      router.navigate({ to: '/login' })
+    }
+    window.addEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
+    return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
+  }, [queryClient, router])
 
   // Map incoming SSE events to precise cache invalidations.
   useSseInvalidations()
