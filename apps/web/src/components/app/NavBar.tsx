@@ -24,6 +24,7 @@ function getNavLinks(role: SessionUser['role']): NavLink[] {
   return [
     { to: '/venue/feed', label: 'Brief Feed' },
     { to: '/venue/proposals', label: 'My Proposals' },
+    { to: '/venue/profile', label: 'Profile' },
   ]
 }
 

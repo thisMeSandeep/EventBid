@@ -42,14 +42,23 @@ interface FeedParams {
   eventType?: string
 }
 
+const EMPTY_FEED: FeedPage = { data: [], nextCursor: null }
+
 export const feedQuery = (params: FeedParams = {}) =>
   queryOptions({
     queryKey: qk.venues.feed(params.cursor, params.eventType),
-    queryFn: () => {
+    queryFn: async (): Promise<FeedPage> => {
       const qs = new URLSearchParams()
       if (params.cursor) qs.set('cursor', params.cursor)
       const s = qs.toString()
-      return apiClient.get<FeedPage>(`/api/venues/me/feed${s ? `?${s}` : ''}`)
+      try {
+        return await apiClient.get<FeedPage>(`/api/venues/me/feed${s ? `?${s}` : ''}`)
+      } catch (err) {
+        // A rep who hasn't created a profile yet has no feed — show it empty
+        // rather than erroring, so they can go set up their profile.
+        if (err instanceof ApiError && err.status === 404) return EMPTY_FEED
+        throw err
+      }
     },
   })
 

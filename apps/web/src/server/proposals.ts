@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 import type { CreateProposalDto, Proposal, ReviseProposalDto } from '@eventbid/shared'
-import { apiClient } from '#/lib/api-client'
+import { apiClient, ApiError } from '#/lib/api-client'
 import { qk } from '#/lib/query-keys'
 
 export type ProposalWithBrief = Proposal & {
@@ -20,16 +20,24 @@ interface MyProposalsParams {
   status?: string
 }
 
+const EMPTY_PROPOSALS: ProposalsPage = { data: [], nextCursor: null }
+
 export const myProposalsQuery = (params: MyProposalsParams = {}) =>
   queryOptions({
     queryKey: qk.venues.proposals(params.cursor, params.status),
-    queryFn: () => {
+    queryFn: async (): Promise<ProposalsPage> => {
       const qs = new URLSearchParams()
       if (params.cursor) qs.set('cursor', params.cursor)
       const s = qs.toString()
-      return apiClient.get<ProposalsPage>(
-        `/api/venues/me/proposals${s ? `?${s}` : ''}`,
-      )
+      try {
+        return await apiClient.get<ProposalsPage>(
+          `/api/venues/me/proposals${s ? `?${s}` : ''}`,
+        )
+      } catch (err) {
+        // No profile yet → no proposals; render empty instead of erroring.
+        if (err instanceof ApiError && err.status === 404) return EMPTY_PROPOSALS
+        throw err
+      }
     },
   })
 
