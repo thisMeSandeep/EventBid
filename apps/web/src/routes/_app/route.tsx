@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { meQuery } from '#/server/auth'
 import { sse } from '#/lib/sse'
+import { useSseInvalidations } from '#/hooks/use-sse-invalidations'
 import { NavBar } from '#/components/app/NavBar'
 
 export const Route = createFileRoute('/_app')({
@@ -33,6 +34,9 @@ function AppShell() {
     sse.connect()
     return () => sse.disconnect()
   }, [])
+
+  // Map incoming SSE events to precise cache invalidations.
+  useSseInvalidations()
 
   return (
     <div className="min-h-screen bg-background">

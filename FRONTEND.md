@@ -864,7 +864,7 @@ The app becomes live. SSE drives cache invalidation and the notification bell.
 
 ---
 
-### Step 31 — Event-to-invalidation map
+### Step 31 — Event-to-invalidation map  [x]
 
 **Files to create:**
 
@@ -894,7 +894,7 @@ The handler map per `FRONTEND-ARCHITECTURE.md` §9. Each event subscribes to a p
 
 ---
 
-### Step 32 — Notification bell + dropdown
+### Step 32 — Notification bell + dropdown  [x]
 
 **Files to create:**
 

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Bell, Menu } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import type { SessionUser } from '#/server/auth'
 import { UserMenu } from './UserMenu'
+import { NotificationBell } from './NotificationBell'
 import {
   Sheet,
   SheetContent,
@@ -61,13 +62,7 @@ export function NavBar({ user }: NavBarProps) {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Notification bell — wired in Step 32 */}
-          <button
-            className="relative flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Notifications"
-          >
-            <Bell className="h-4 w-4" />
-          </button>
+          <NotificationBell user={user} />
 
           <UserMenu user={user} />
 
