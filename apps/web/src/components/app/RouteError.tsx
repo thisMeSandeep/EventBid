@@ -1,13 +1,20 @@
+import { useEffect } from 'react'
 import type { ErrorComponentProps } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { ApiError } from '#/lib/api-client'
+import { logger } from '#/lib/logger'
 import { Button } from '#/components/ui/button'
 
 // Default route error boundary. FORBIDDEN gets domain copy; everything else is
-// the generic 500-style message per design §8 (no technical details). Logging
-// is wired in Step 36.
+// the generic 500-style message per design §8 (no technical details).
 export function RouteError({ error, reset }: ErrorComponentProps) {
   const isForbidden = error instanceof ApiError && error.code === 'FORBIDDEN'
+
+  // Capture every route error at the top of the tree — the logger is the only
+  // diagnostics sink in v1.
+  useEffect(() => {
+    logger.error({ err: error }, 'Route error boundary caught an error')
+  }, [error])
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">

@@ -1,4 +1,5 @@
 import { env } from './env'
+import { logger } from './logger'
 
 type Listener = (event: MessageEvent) => void
 
@@ -13,12 +14,30 @@ class SSEManager {
   // be detached again on unsubscribe.
   private wrappers = new Map<Listener, Listener>()
   private lastEventId?: string
+  private opened = false
 
   connect() {
     if (this.es) return
     // The API is served under `/api`; SSE lives at `/api/sse`.
     const url = new URL('/api/sse', env.VITE_API_URL)
     this.es = new EventSource(url.toString(), { withCredentials: true })
+
+    this.es.addEventListener('open', () => {
+      // `readyState` distinguishes the first open from a browser reconnect.
+      if (this.opened) {
+        logger.info('SSE reconnected')
+      } else {
+        this.opened = true
+        logger.debug('SSE connection opened')
+      }
+    })
+    this.es.addEventListener('error', () => {
+      // EventSource auto-reconnects; CLOSED means it gave up.
+      logger.info(
+        { readyState: this.es?.readyState },
+        'SSE connection interrupted — browser will retry',
+      )
+    })
 
     // Bind any handlers registered before the connection opened.
     for (const [event, handlers] of this.listeners) {
@@ -44,8 +63,12 @@ class SSEManager {
   }
 
   disconnect() {
-    this.es?.close()
+    if (this.es) {
+      this.es.close()
+      logger.debug('SSE connection closed')
+    }
     this.es = undefined
+    this.opened = false
   }
 
   // Returns a stable wrapper for a listener, recording the latest event id

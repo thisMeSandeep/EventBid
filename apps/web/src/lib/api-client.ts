@@ -1,4 +1,5 @@
 import { env } from './env'
+import { logger } from './logger'
 
 // Decoupling shim: the API client can't import the router/query client without
 // a cycle, so a 401 is published on a tiny event bus. `_app/route.tsx`
@@ -23,19 +24,30 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${env.VITE_API_URL}${path}`, {
-    ...init,
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-  })
+  let res: Response
+  try {
+    res = await fetch(`${env.VITE_API_URL}${path}`, {
+      ...init,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(init?.headers ?? {}),
+      },
+    })
+  } catch (err) {
+    logger.error({ err, path, method: init?.method ?? 'GET' }, 'API request failed')
+    throw err
+  }
 
   if (!res.ok) {
     const body = await res.json().catch(() => null)
     const code = body?.error?.code ?? 'UNKNOWN'
     const message = body?.error?.message ?? res.statusText
+
+    logger.warn(
+      { path, method: init?.method ?? 'GET', status: res.status, code },
+      'API responded with an error',
+    )
 
     if (res.status === 401) {
       notifyUnauthorized()
@@ -62,21 +74,29 @@ export const apiClient = {
 
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 
-  upload: <T>(path: string, form: FormData): Promise<T> =>
-    fetch(`${env.VITE_API_URL}${path}`, {
-      method: 'POST',
-      body: form,
-      credentials: 'include',
-    }).then(async (res) => {
-      if (!res.ok) {
-        const body = await res.json().catch(() => null)
-        if (res.status === 401) notifyUnauthorized()
-        throw new ApiError(
-          res.status,
-          body?.error?.code ?? 'UNKNOWN',
-          body?.error?.message ?? res.statusText,
-        )
-      }
-      return res.json() as Promise<T>
-    }),
+  upload: async <T>(path: string, form: FormData): Promise<T> => {
+    let res: Response
+    try {
+      res = await fetch(`${env.VITE_API_URL}${path}`, {
+        method: 'POST',
+        body: form,
+        credentials: 'include',
+      })
+    } catch (err) {
+      logger.error({ err, path, method: 'POST' }, 'API upload failed')
+      throw err
+    }
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => null)
+      const code = body?.error?.code ?? 'UNKNOWN'
+      logger.warn(
+        { path, method: 'POST', status: res.status, code },
+        'API responded with an error',
+      )
+      if (res.status === 401) notifyUnauthorized()
+      throw new ApiError(res.status, code, body?.error?.message ?? res.statusText)
+    }
+    return res.json() as Promise<T>
+  },
 }

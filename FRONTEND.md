@@ -1000,7 +1000,7 @@ Per `FRONTEND-DESIGN.md` §7 Loading States:
 
 ---
 
-### Step 36 — Logger wiring
+### Step 36 — Logger wiring  [x]
 
 **Goal:** A single browser logger instance, used everywhere we'd otherwise reach for `console.*`. No error-monitoring SaaS in v1 — the logger is the only sink.
 

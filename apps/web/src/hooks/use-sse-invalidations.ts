@@ -3,6 +3,7 @@ import { useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { sse } from '#/lib/sse'
 import { qk } from '#/lib/query-keys'
+import { logger } from '#/lib/logger'
 
 interface SsePayload {
   briefId?: string
@@ -71,6 +72,13 @@ export function useSseInvalidations() {
   useEffect(() => {
     const unsubscribers = Object.entries(handlers).map(([event, handler]) =>
       sse.on(event, (e) => handler(parsePayload(e.data), queryClient)),
+    )
+    // Catch any untyped/unknown event the server sends (heartbeats are named
+    // and ignored separately). Logged at warn so new event types surface.
+    unsubscribers.push(
+      sse.on('message', (e) =>
+        logger.warn({ event: e.type, data: e.data }, 'unknown SSE event'),
+      ),
     )
     return () => unsubscribers.forEach((off) => off())
   }, [queryClient])
