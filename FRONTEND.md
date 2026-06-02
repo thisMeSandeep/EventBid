@@ -814,7 +814,7 @@ The venue rep can manage their profile, see matched briefs, and submit proposals
 
 ---
 
-### Step 29 — `/venue/proposals` page
+### Step 29 — `/venue/proposals` page  [x]
 
 **Files to create:**
 

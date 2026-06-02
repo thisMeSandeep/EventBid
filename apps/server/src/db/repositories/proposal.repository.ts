@@ -4,13 +4,20 @@ import type {
   CreateProposalInput,
   Proposal,
 } from "@eventbid/shared";
-import { proposals, venues } from "../schema";
+import { briefs, proposals, venues } from "../schema";
 
 export type ProposalWithVenueRow = Proposal & {
   venueName: string;
   venueCity: string;
   venueEmail: string | null;
   venuePhone: string | null;
+};
+
+export type ProposalWithBriefRow = Proposal & {
+  briefEventType: string;
+  briefCity: string;
+  briefDeadline: Date;
+  briefStatus: string;
 };
 
 export class ProposalRepository {
@@ -72,6 +79,41 @@ export class ProposalRepository {
     return this.db
       .select()
       .from(proposals)
+      .where(whereClause)
+      .orderBy(desc(proposals.createdAt));
+  }
+
+  async findByVenueIdWithBrief(
+    venueId: string,
+    cursor?: string,
+  ): Promise<ProposalWithBriefRow[]> {
+    const whereClause = cursor
+      ? and(eq(proposals.venueId, venueId), lt(proposals.id, cursor))
+      : eq(proposals.venueId, venueId);
+
+    return this.db
+      .select({
+        id: proposals.id,
+        briefId: proposals.briefId,
+        venueId: proposals.venueId,
+        version: proposals.version,
+        status: proposals.status,
+        totalPrice: proposals.totalPrice,
+        priceType: proposals.priceType,
+        inclusions: proposals.inclusions,
+        capacityConfirmed: proposals.capacityConfirmed,
+        cateringType: proposals.cateringType,
+        amenities: proposals.amenities,
+        availabilityConfirmed: proposals.availabilityConfirmed,
+        notes: proposals.notes,
+        createdAt: proposals.createdAt,
+        briefEventType: briefs.eventType,
+        briefCity: briefs.city,
+        briefDeadline: briefs.deadline,
+        briefStatus: briefs.status,
+      })
+      .from(proposals)
+      .innerJoin(briefs, eq(proposals.briefId, briefs.id))
       .where(whereClause)
       .orderBy(desc(proposals.createdAt));
   }

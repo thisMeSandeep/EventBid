@@ -17,6 +17,7 @@ import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as AppVenueRouteRouteImport } from './routes/_app/venue/route'
 import { Route as AppHostRouteRouteImport } from './routes/_app/host/route'
+import { Route as AppVenueProposalsRouteImport } from './routes/_app/venue/proposals'
 import { Route as AppVenueProfileRouteImport } from './routes/_app/venue/profile'
 import { Route as AppVenueFeedRouteImport } from './routes/_app/venue/feed'
 import { Route as AppVenueVenueIdRouteImport } from './routes/_app/venue/$venueId'
@@ -66,6 +67,11 @@ const AppHostRouteRoute = AppHostRouteRouteImport.update({
   id: '/host',
   path: '/host',
   getParentRoute: () => AppRouteRoute,
+} as any)
+const AppVenueProposalsRoute = AppVenueProposalsRouteImport.update({
+  id: '/proposals',
+  path: '/proposals',
+  getParentRoute: () => AppVenueRouteRoute,
 } as any)
 const AppVenueProfileRoute = AppVenueProfileRouteImport.update({
   id: '/profile',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/venue/$venueId': typeof AppVenueVenueIdRoute
   '/venue/feed': typeof AppVenueFeedRoute
   '/venue/profile': typeof AppVenueProfileRoute
+  '/venue/proposals': typeof AppVenueProposalsRoute
   '/host/briefs/$briefId': typeof AppHostBriefsBriefIdRouteRouteWithChildren
   '/venue/briefs/$briefId': typeof AppVenueBriefsBriefIdRouteRouteWithChildren
   '/host/briefs/new': typeof AppHostBriefsNewRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/venue/$venueId': typeof AppVenueVenueIdRoute
   '/venue/feed': typeof AppVenueFeedRoute
   '/venue/profile': typeof AppVenueProfileRoute
+  '/venue/proposals': typeof AppVenueProposalsRoute
   '/host/briefs/new': typeof AppHostBriefsNewRoute
   '/host/briefs': typeof AppHostBriefsIndexRoute
   '/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/_app/venue/$venueId': typeof AppVenueVenueIdRoute
   '/_app/venue/feed': typeof AppVenueFeedRoute
   '/_app/venue/profile': typeof AppVenueProfileRoute
+  '/_app/venue/proposals': typeof AppVenueProposalsRoute
   '/_app/host/briefs/$briefId': typeof AppHostBriefsBriefIdRouteRouteWithChildren
   '/_app/venue/briefs/$briefId': typeof AppVenueBriefsBriefIdRouteRouteWithChildren
   '/_app/host/briefs/new': typeof AppHostBriefsNewRoute
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
     | '/venue/$venueId'
     | '/venue/feed'
     | '/venue/profile'
+    | '/venue/proposals'
     | '/host/briefs/$briefId'
     | '/venue/briefs/$briefId'
     | '/host/briefs/new'
@@ -218,6 +228,7 @@ export interface FileRouteTypes {
     | '/venue/$venueId'
     | '/venue/feed'
     | '/venue/profile'
+    | '/venue/proposals'
     | '/host/briefs/new'
     | '/host/briefs'
     | '/host/briefs/$briefId/edit'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/_app/venue/$venueId'
     | '/_app/venue/feed'
     | '/_app/venue/profile'
+    | '/_app/venue/proposals'
     | '/_app/host/briefs/$briefId'
     | '/_app/venue/briefs/$briefId'
     | '/_app/host/briefs/new'
@@ -311,6 +323,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/host'
       preLoaderRoute: typeof AppHostRouteRouteImport
       parentRoute: typeof AppRouteRoute
+    }
+    '/_app/venue/proposals': {
+      id: '/_app/venue/proposals'
+      path: '/proposals'
+      fullPath: '/venue/proposals'
+      preLoaderRoute: typeof AppVenueProposalsRouteImport
+      parentRoute: typeof AppVenueRouteRoute
     }
     '/_app/venue/profile': {
       id: '/_app/venue/profile'
@@ -444,6 +463,7 @@ interface AppVenueRouteRouteChildren {
   AppVenueVenueIdRoute: typeof AppVenueVenueIdRoute
   AppVenueFeedRoute: typeof AppVenueFeedRoute
   AppVenueProfileRoute: typeof AppVenueProfileRoute
+  AppVenueProposalsRoute: typeof AppVenueProposalsRoute
   AppVenueBriefsBriefIdRouteRoute: typeof AppVenueBriefsBriefIdRouteRouteWithChildren
 }
 
@@ -451,6 +471,7 @@ const AppVenueRouteRouteChildren: AppVenueRouteRouteChildren = {
   AppVenueVenueIdRoute: AppVenueVenueIdRoute,
   AppVenueFeedRoute: AppVenueFeedRoute,
   AppVenueProfileRoute: AppVenueProfileRoute,
+  AppVenueProposalsRoute: AppVenueProposalsRoute,
   AppVenueBriefsBriefIdRouteRoute: AppVenueBriefsBriefIdRouteRouteWithChildren,
 }
 

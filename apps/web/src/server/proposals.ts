@@ -3,8 +3,15 @@ import type { CreateProposalDto, Proposal, ReviseProposalDto } from '@eventbid/s
 import { apiClient } from '#/lib/api-client'
 import { qk } from '#/lib/query-keys'
 
+export type ProposalWithBrief = Proposal & {
+  briefEventType: string
+  briefCity: string
+  briefDeadline: string
+  briefStatus: string
+}
+
 export interface ProposalsPage {
-  data: Proposal[]
+  data: ProposalWithBrief[]
   nextCursor: string | null
 }
 

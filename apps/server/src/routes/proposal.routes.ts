@@ -173,7 +173,7 @@ venueProposalRoutes.get(
     const user = c.get("user");
     const venue = await requireVenueForUser(user.id);
     const cursor = c.req.query("cursor");
-    const proposals = await repositories.proposals.findByVenueId(
+    const proposals = await repositories.proposals.findByVenueIdWithBrief(
       venue.id,
       cursor,
     );
