@@ -10,6 +10,10 @@ import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { Separator } from '#/components/ui/separator'
+import { AuthLayout } from './AuthLayout'
+import { PasswordInput } from './PasswordInput'
+import ballroomImage from '#/assets/ballroomImage.webp'
+import googleIcon from '#/assets/google.svg'
 
 const nameSchema = z.string().min(1, 'Name is required')
 const emailSchema = z.email('Enter a valid email address')
@@ -42,182 +46,159 @@ export function RegisterForm() {
   })
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-12">
-      <div className="w-full max-w-sm">
-        {/* Wordmark */}
-        <div className="text-center mb-8">
-          <span className="text-2xl font-semibold text-foreground tracking-tight">
-            EventBid
-          </span>
-        </div>
+    <AuthLayout
+      image={ballroomImage}
+      imageAlt="A venue ready to host an event"
+      caption={{
+        title: 'Your perfect venue is one brief away.',
+        subtitle: 'Post your event and let top venues come to you.',
+      }}
+    >
+      {/* Heading */}
+      <h1 className="font-serif text-[32px] font-normal tracking-[-0.01em] text-foreground">
+        Create your account
+      </h1>
+      <p className="mt-2 text-[15px] text-muted-foreground">
+        Get started in less than a minute
+      </p>
 
-        {/* Heading */}
-        <h1 className="text-2xl font-semibold text-foreground">Create your account</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Get started in less than a minute
-        </p>
-
-        {/* Form */}
-        <form
-          className="mt-6 space-y-4"
-          onSubmit={(e) => {
-            e.preventDefault()
-            form.handleSubmit()
+      {/* Form */}
+      <form
+        className="mt-8 space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault()
+          form.handleSubmit()
+        }}
+      >
+        {/* Name */}
+        <form.Field
+          name="name"
+          validators={{
+            onSubmit: ({ value }) => {
+              const r = nameSchema.safeParse(value)
+              return r.success ? undefined : r.error.issues[0]?.message
+            },
           }}
         >
-          {/* Name */}
-          <form.Field
-            name="name"
-            validators={{
-              onSubmit: ({ value }) => {
-                const r = nameSchema.safeParse(value)
-                return r.success ? undefined : r.error.issues[0]?.message
-              },
-            }}
-          >
-            {(field) => (
-              <div className="space-y-1">
-                <Label htmlFor={field.name}>Full name</Label>
-                <Input
-                  id={field.name}
-                  type="text"
-                  placeholder="Alex Johnson"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  autoComplete="name"
-                />
-                {field.state.meta.errors.length > 0 && (
-                  <p className="text-destructive text-xs mt-1">
-                    {field.state.meta.errors.filter(Boolean).join(', ')}
-                  </p>
-                )}
-              </div>
-            )}
-          </form.Field>
+          {(field) => (
+            <div className="space-y-1.5">
+              <Label htmlFor={field.name}>Full name</Label>
+              <Input
+                id={field.name}
+                type="text"
+                placeholder="Alex Johnson"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                autoComplete="name"
+              />
+              {field.state.meta.errors.length > 0 && (
+                <p className="text-destructive text-xs mt-1">
+                  {field.state.meta.errors.filter(Boolean).join(', ')}
+                </p>
+              )}
+            </div>
+          )}
+        </form.Field>
 
-          {/* Email */}
-          <form.Field
-            name="email"
-            validators={{
-              onSubmit: ({ value }) => {
-                const r = emailSchema.safeParse(value)
-                return r.success ? undefined : r.error.issues[0]?.message
-              },
-            }}
-          >
-            {(field) => (
-              <div className="space-y-1">
-                <Label htmlFor={field.name}>Email</Label>
-                <Input
-                  id={field.name}
-                  type="email"
-                  placeholder="you@example.com"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  autoComplete="email"
-                />
-                {field.state.meta.errors.length > 0 && (
-                  <p className="text-destructive text-xs mt-1">
-                    {field.state.meta.errors.filter(Boolean).join(', ')}
-                  </p>
-                )}
-              </div>
-            )}
-          </form.Field>
-
-          {/* Password */}
-          <form.Field
-            name="password"
-            validators={{
-              onSubmit: ({ value }) => {
-                const r = passwordSchema.safeParse(value)
-                return r.success ? undefined : r.error.issues[0]?.message
-              },
-            }}
-          >
-            {(field) => (
-              <div className="space-y-1">
-                <Label htmlFor={field.name}>Password</Label>
-                <Input
-                  id={field.name}
-                  type="password"
-                  placeholder="••••••••"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  autoComplete="new-password"
-                />
-                {field.state.meta.errors.length > 0 && (
-                  <p className="text-destructive text-xs mt-1">
-                    {field.state.meta.errors.filter(Boolean).join(', ')}
-                  </p>
-                )}
-              </div>
-            )}
-          </form.Field>
-
-          {/* Submit */}
-          <Button
-            type="submit"
-            className="w-full mt-6"
-            disabled={registerMutation.isPending}
-          >
-            {registerMutation.isPending ? 'Creating account…' : 'Create account'}
-          </Button>
-        </form>
-
-        {/* Google OAuth */}
-        <div className="mt-4 flex items-center gap-3">
-          <Separator className="flex-1" />
-          <span className="text-xs text-muted-foreground">or</span>
-          <Separator className="flex-1" />
-        </div>
-        <button
-          type="button"
-          onClick={() =>
-            authClient.signIn.social({ provider: 'google', callbackURL: '/onboarding/role' })
-          }
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted/50"
+        {/* Email */}
+        <form.Field
+          name="email"
+          validators={{
+            onSubmit: ({ value }) => {
+              const r = emailSchema.safeParse(value)
+              return r.success ? undefined : r.error.issues[0]?.message
+            },
+          }}
         >
-          <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-            <path
-              d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"
-              fill="currentColor"
-              opacity="0.1"
-            />
-            <path
-              d="M21.8 12.2c0-.7-.1-1.3-.2-1.9H12v3.6h5.5c-.2 1.2-1 2.3-2 3v2.5h3.3c1.9-1.7 3-4.3 3-7.2z"
-              fill="#4285F4"
-            />
-            <path
-              d="M12 22c2.7 0 5-0.9 6.7-2.4l-3.3-2.5c-.9.6-2.1 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3v2.6C4.8 19.8 8.2 22 12 22z"
-              fill="#34A853"
-            />
-            <path
-              d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3C2.4 8.7 2 10.3 2 12s.4 3.3 1 4.6L6.4 14z"
-              fill="#FBBC04"
-            />
-            <path
-              d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.8-2.8C16.9 3 14.7 2 12 2 8.2 2 4.8 4.2 3 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z"
-              fill="#EA4335"
-            />
-          </svg>
-          Continue with Google
-        </button>
+          {(field) => (
+            <div className="space-y-1.5">
+              <Label htmlFor={field.name}>Email</Label>
+              <Input
+                id={field.name}
+                type="email"
+                placeholder="you@example.com"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                autoComplete="email"
+              />
+              {field.state.meta.errors.length > 0 && (
+                <p className="text-destructive text-xs mt-1">
+                  {field.state.meta.errors.filter(Boolean).join(', ')}
+                </p>
+              )}
+            </div>
+          )}
+        </form.Field>
 
-        {/* Switch to login */}
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <a
-            href="/login"
-            className="text-foreground font-medium underline-offset-4 hover:underline"
-          >
-            Sign in
-          </a>
-        </p>
+        {/* Password */}
+        <form.Field
+          name="password"
+          validators={{
+            onSubmit: ({ value }) => {
+              const r = passwordSchema.safeParse(value)
+              return r.success ? undefined : r.error.issues[0]?.message
+            },
+          }}
+        >
+          {(field) => (
+            <div className="space-y-1.5">
+              <Label htmlFor={field.name}>Password</Label>
+              <PasswordInput
+                id={field.name}
+                placeholder="••••••••"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                autoComplete="new-password"
+              />
+              {field.state.meta.errors.length > 0 && (
+                <p className="text-destructive text-xs mt-1">
+                  {field.state.meta.errors.filter(Boolean).join(', ')}
+                </p>
+              )}
+            </div>
+          )}
+        </form.Field>
+
+        {/* Submit */}
+        <Button
+          type="submit"
+          className="mt-6 h-11 w-full rounded-full bg-foreground font-normal text-background transition-colors duration-200 ease-out hover:bg-foreground/90"
+          disabled={registerMutation.isPending}
+        >
+          {registerMutation.isPending ? 'Creating account…' : 'Create account'}
+        </Button>
+      </form>
+
+      {/* Google OAuth */}
+      <div className="mt-6 flex items-center gap-3">
+        <Separator className="flex-1 bg-border/60" />
+        <span className="text-xs text-muted-foreground">or</span>
+        <Separator className="flex-1 bg-border/60" />
       </div>
-    </div>
+      <button
+        type="button"
+        onClick={() =>
+          authClient.signIn.social({ provider: 'google', callbackURL: '/onboarding/role' })
+        }
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-black/[0.06] bg-card px-4 py-2.5 text-sm font-normal text-foreground transition-colors duration-200 ease-out hover:bg-muted/60"
+      >
+        <img src={googleIcon} alt="" className="h-4 w-4" />
+        Continue with Google
+      </button>
+
+      {/* Switch to login */}
+      <p className="mt-8 text-center text-sm text-muted-foreground">
+        Already have an account?{' '}
+        <a
+          href="/login"
+          className="text-foreground font-medium underline-offset-4 hover:underline"
+        >
+          Sign in
+        </a>
+      </p>
+    </AuthLayout>
   )
 }

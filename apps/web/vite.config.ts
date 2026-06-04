@@ -14,7 +14,9 @@ const config = defineConfig({
     devtools(),
     nitro(),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      pages: [{ path: '/', prerender: { enabled: true } }],
+    }),
     viteReact(),
     babel({ presets: [reactCompilerPreset()] }),
   ],
