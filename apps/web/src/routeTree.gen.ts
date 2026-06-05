@@ -30,6 +30,8 @@ import { Route as AppVenueBriefsBriefIdIndexRouteImport } from './routes/_app/ve
 import { Route as AppHostBriefsBriefIdIndexRouteImport } from './routes/_app/host/briefs/$briefId/index'
 import { Route as AppVenueBriefsBriefIdProposeRouteImport } from './routes/_app/venue/briefs/$briefId/propose'
 import { Route as AppHostBriefsBriefIdEditRouteImport } from './routes/_app/host/briefs/$briefId/edit'
+import { Route as AppHostBriefsBriefIdCompareRouteImport } from './routes/_app/host/briefs/$briefId/compare'
+import { Route as AppHostBriefsBriefIdProposalsProposalIdRouteImport } from './routes/_app/host/briefs/$briefId/proposals/$proposalId'
 
 const PublicRouteRoute = PublicRouteRouteImport.update({
   id: '/_public',
@@ -140,6 +142,18 @@ const AppHostBriefsBriefIdEditRoute =
     path: '/edit',
     getParentRoute: () => AppHostBriefsBriefIdRouteRoute,
   } as any)
+const AppHostBriefsBriefIdCompareRoute =
+  AppHostBriefsBriefIdCompareRouteImport.update({
+    id: '/compare',
+    path: '/compare',
+    getParentRoute: () => AppHostBriefsBriefIdRouteRoute,
+  } as any)
+const AppHostBriefsBriefIdProposalsProposalIdRoute =
+  AppHostBriefsBriefIdProposalsProposalIdRouteImport.update({
+    id: '/proposals/$proposalId',
+    path: '/proposals/$proposalId',
+    getParentRoute: () => AppHostBriefsBriefIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -157,10 +171,12 @@ export interface FileRoutesByFullPath {
   '/venue/briefs/$briefId': typeof AppVenueBriefsBriefIdRouteRouteWithChildren
   '/host/briefs/new': typeof AppHostBriefsNewRoute
   '/host/briefs/': typeof AppHostBriefsIndexRoute
+  '/host/briefs/$briefId/compare': typeof AppHostBriefsBriefIdCompareRoute
   '/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
   '/venue/briefs/$briefId/propose': typeof AppVenueBriefsBriefIdProposeRoute
   '/host/briefs/$briefId/': typeof AppHostBriefsBriefIdIndexRoute
   '/venue/briefs/$briefId/': typeof AppVenueBriefsBriefIdIndexRoute
+  '/host/briefs/$briefId/proposals/$proposalId': typeof AppHostBriefsBriefIdProposalsProposalIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -176,10 +192,12 @@ export interface FileRoutesByTo {
   '/venue/proposals': typeof AppVenueProposalsRoute
   '/host/briefs/new': typeof AppHostBriefsNewRoute
   '/host/briefs': typeof AppHostBriefsIndexRoute
+  '/host/briefs/$briefId/compare': typeof AppHostBriefsBriefIdCompareRoute
   '/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
   '/venue/briefs/$briefId/propose': typeof AppVenueBriefsBriefIdProposeRoute
   '/host/briefs/$briefId': typeof AppHostBriefsBriefIdIndexRoute
   '/venue/briefs/$briefId': typeof AppVenueBriefsBriefIdIndexRoute
+  '/host/briefs/$briefId/proposals/$proposalId': typeof AppHostBriefsBriefIdProposalsProposalIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -200,10 +218,12 @@ export interface FileRoutesById {
   '/_app/venue/briefs/$briefId': typeof AppVenueBriefsBriefIdRouteRouteWithChildren
   '/_app/host/briefs/new': typeof AppHostBriefsNewRoute
   '/_app/host/briefs/': typeof AppHostBriefsIndexRoute
+  '/_app/host/briefs/$briefId/compare': typeof AppHostBriefsBriefIdCompareRoute
   '/_app/host/briefs/$briefId/edit': typeof AppHostBriefsBriefIdEditRoute
   '/_app/venue/briefs/$briefId/propose': typeof AppVenueBriefsBriefIdProposeRoute
   '/_app/host/briefs/$briefId/': typeof AppHostBriefsBriefIdIndexRoute
   '/_app/venue/briefs/$briefId/': typeof AppVenueBriefsBriefIdIndexRoute
+  '/_app/host/briefs/$briefId/proposals/$proposalId': typeof AppHostBriefsBriefIdProposalsProposalIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -223,10 +243,12 @@ export interface FileRouteTypes {
     | '/venue/briefs/$briefId'
     | '/host/briefs/new'
     | '/host/briefs/'
+    | '/host/briefs/$briefId/compare'
     | '/host/briefs/$briefId/edit'
     | '/venue/briefs/$briefId/propose'
     | '/host/briefs/$briefId/'
     | '/venue/briefs/$briefId/'
+    | '/host/briefs/$briefId/proposals/$proposalId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -242,10 +264,12 @@ export interface FileRouteTypes {
     | '/venue/proposals'
     | '/host/briefs/new'
     | '/host/briefs'
+    | '/host/briefs/$briefId/compare'
     | '/host/briefs/$briefId/edit'
     | '/venue/briefs/$briefId/propose'
     | '/host/briefs/$briefId'
     | '/venue/briefs/$briefId'
+    | '/host/briefs/$briefId/proposals/$proposalId'
   id:
     | '__root__'
     | '/'
@@ -265,10 +289,12 @@ export interface FileRouteTypes {
     | '/_app/venue/briefs/$briefId'
     | '/_app/host/briefs/new'
     | '/_app/host/briefs/'
+    | '/_app/host/briefs/$briefId/compare'
     | '/_app/host/briefs/$briefId/edit'
     | '/_app/venue/briefs/$briefId/propose'
     | '/_app/host/briefs/$briefId/'
     | '/_app/venue/briefs/$briefId/'
+    | '/_app/host/briefs/$briefId/proposals/$proposalId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -427,18 +453,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHostBriefsBriefIdEditRouteImport
       parentRoute: typeof AppHostBriefsBriefIdRouteRoute
     }
+    '/_app/host/briefs/$briefId/compare': {
+      id: '/_app/host/briefs/$briefId/compare'
+      path: '/compare'
+      fullPath: '/host/briefs/$briefId/compare'
+      preLoaderRoute: typeof AppHostBriefsBriefIdCompareRouteImport
+      parentRoute: typeof AppHostBriefsBriefIdRouteRoute
+    }
+    '/_app/host/briefs/$briefId/proposals/$proposalId': {
+      id: '/_app/host/briefs/$briefId/proposals/$proposalId'
+      path: '/proposals/$proposalId'
+      fullPath: '/host/briefs/$briefId/proposals/$proposalId'
+      preLoaderRoute: typeof AppHostBriefsBriefIdProposalsProposalIdRouteImport
+      parentRoute: typeof AppHostBriefsBriefIdRouteRoute
+    }
   }
 }
 
 interface AppHostBriefsBriefIdRouteRouteChildren {
+  AppHostBriefsBriefIdCompareRoute: typeof AppHostBriefsBriefIdCompareRoute
   AppHostBriefsBriefIdEditRoute: typeof AppHostBriefsBriefIdEditRoute
   AppHostBriefsBriefIdIndexRoute: typeof AppHostBriefsBriefIdIndexRoute
+  AppHostBriefsBriefIdProposalsProposalIdRoute: typeof AppHostBriefsBriefIdProposalsProposalIdRoute
 }
 
 const AppHostBriefsBriefIdRouteRouteChildren: AppHostBriefsBriefIdRouteRouteChildren =
   {
+    AppHostBriefsBriefIdCompareRoute: AppHostBriefsBriefIdCompareRoute,
     AppHostBriefsBriefIdEditRoute: AppHostBriefsBriefIdEditRoute,
     AppHostBriefsBriefIdIndexRoute: AppHostBriefsBriefIdIndexRoute,
+    AppHostBriefsBriefIdProposalsProposalIdRoute:
+      AppHostBriefsBriefIdProposalsProposalIdRoute,
   }
 
 const AppHostBriefsBriefIdRouteRouteWithChildren =

@@ -86,7 +86,7 @@ export function VenueProposalCard({ proposal }: { proposal: Proposal }) {
         {proposal.inclusions && proposal.inclusions.length > 0 && (
           <Section title="What's included">
             <ul className="space-y-1.5">
-              {proposal.inclusions.map((inc) => (
+              {proposal.inclusions.map((inc: string) => (
                 <li
                   key={inc}
                   className="flex items-center gap-2 text-sm text-foreground"
@@ -102,7 +102,7 @@ export function VenueProposalCard({ proposal }: { proposal: Proposal }) {
         {proposal.amenities && proposal.amenities.length > 0 && (
           <Section title="Amenities">
             <div className="flex flex-wrap gap-2">
-              {proposal.amenities.map((a) => (
+              {proposal.amenities.map((a: string) => (
                 <span
                   key={a}
                   className="rounded-full border border-black/[0.06] bg-muted/60 px-3 py-1 text-[13px] text-foreground"

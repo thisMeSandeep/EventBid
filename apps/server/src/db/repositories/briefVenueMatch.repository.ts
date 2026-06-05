@@ -76,9 +76,15 @@ export class BriefVenueMatchRepository {
     venueId: string,
     cursor?: string,
   ): Promise<BriefVenueMatchWithBrief[]> {
+    // The feed only surfaces briefs still accepting proposals — closed/expired
+    // briefs drop out automatically.
     const whereClause = cursor
-      ? and(eq(briefVenueMatches.venueId, venueId), lt(briefVenueMatches.id, cursor))
-      : eq(briefVenueMatches.venueId, venueId);
+      ? and(
+          eq(briefVenueMatches.venueId, venueId),
+          eq(briefs.status, "open"),
+          lt(briefVenueMatches.id, cursor),
+        )
+      : and(eq(briefVenueMatches.venueId, venueId), eq(briefs.status, "open"));
 
     const rows = await this.db
       .select({
