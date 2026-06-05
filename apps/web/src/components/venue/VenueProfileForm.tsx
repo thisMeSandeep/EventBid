@@ -1,5 +1,8 @@
+import type { ComponentType, ReactNode } from 'react'
+import { Link } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Building2, Eye, SlidersHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
 import { amenities, eventTypes, type UpdateVenueDto, type Venue } from '@eventbid/shared'
 import { updateVenue } from '#/server/venues'
@@ -76,6 +79,33 @@ function FieldError({ errors }: { errors: unknown[] }) {
   )
 }
 
+function FormSection({
+  icon: Icon,
+  title,
+  description,
+  children,
+}: {
+  icon: ComponentType<{ className?: string }>
+  title: string
+  description: string
+  children: ReactNode
+}) {
+  return (
+    <section className="rounded-xl border border-black/[0.06] bg-card p-6 shadow-sm sm:p-8">
+      <div className="flex items-start gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted/60 text-muted-foreground">
+          <Icon className="h-4 w-4" />
+        </span>
+        <div>
+          <h2 className="text-base font-medium text-foreground">{title}</h2>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">{description}</p>
+        </div>
+      </div>
+      <div className="mt-6 space-y-4 [&_label]:mb-2 [&_label]:block">{children}</div>
+    </section>
+  )
+}
+
 export function VenueProfileForm({ venue }: { venue: Venue | null }) {
   const queryClient = useQueryClient()
 
@@ -116,19 +146,41 @@ export function VenueProfileForm({ venue }: { venue: Venue | null }) {
 
   return (
     <form
-      className="mx-auto max-w-2xl px-6 py-8"
+      className="mx-auto max-w-2xl px-6 py-10"
       onSubmit={(e) => {
         e.preventDefault()
         form.handleSubmit()
       }}
     >
-      <h1 className="text-xl font-semibold text-foreground">Venue profile</h1>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-serif text-[28px] font-normal tracking-[-0.01em] text-foreground">
+            Venue profile
+          </h1>
+          <p className="mt-1 text-[13px] text-muted-foreground">
+            Keep your details current so we can match you with the right briefs.
+          </p>
+        </div>
+        {venue?.id && (
+          <Link
+            to="/venue/$venueId"
+            params={{ venueId: venue.id }}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-black/[0.06] bg-card px-3.5 py-1.5 text-[13px] text-muted-foreground transition-colors duration-200 ease-out hover:bg-muted/60 hover:text-foreground"
+          >
+            <Eye className="h-3.5 w-3.5" />
+            View public profile
+          </Link>
+        )}
+      </div>
 
-      {/* Basic info */}
-      <section className="mt-6 space-y-4">
-        <h2 className="text-base font-medium text-foreground">Basic info</h2>
-
-        <form.Field
+      <div className="mt-8 space-y-6">
+        {/* Basic info */}
+        <FormSection
+          icon={Building2}
+          title="Basic info"
+          description="The essentials hosts see first."
+        >
+          <form.Field
           name="name"
           validators={{
             onSubmit: ({ value }) => (value.trim() ? undefined : 'Name is required'),
@@ -243,14 +295,16 @@ export function VenueProfileForm({ venue }: { venue: Venue | null }) {
             </div>
           )}
         </form.Field>
-      </section>
+        </FormSection>
 
-      {/* Details */}
-      <section className="mt-8 space-y-4">
-        <h2 className="text-base font-medium text-foreground">Details</h2>
-
-        <form.Field
-          name="maxCapacity"
+        {/* Details */}
+        <FormSection
+          icon={SlidersHorizontal}
+          title="Details"
+          description="Capacity and the kinds of events you host."
+        >
+          <form.Field
+            name="maxCapacity"
           validators={{
             onSubmit: ({ value }) =>
               Number(value) > 0 ? undefined : 'Enter a valid capacity',
@@ -275,7 +329,7 @@ export function VenueProfileForm({ venue }: { venue: Venue | null }) {
           {(field) => (
             <div>
               <Label>Event types</Label>
-              <div className="mt-1.5">
+              <div>
                 <TagPicker
                   options={eventTypes}
                   value={field.state.value}
@@ -290,7 +344,7 @@ export function VenueProfileForm({ venue }: { venue: Venue | null }) {
           {(field) => (
             <div>
               <Label>Style</Label>
-              <div className="mt-1.5">
+              <div>
                 <TagPicker
                   options={STYLE_TAGS}
                   value={field.state.value}
@@ -305,7 +359,7 @@ export function VenueProfileForm({ venue }: { venue: Venue | null }) {
           {(field) => (
             <div>
               <Label>Amenities</Label>
-              <div className="mt-1.5">
+              <div>
                 <TagPicker
                   options={amenities}
                   value={field.state.value}
@@ -315,11 +369,16 @@ export function VenueProfileForm({ venue }: { venue: Venue | null }) {
             </div>
           )}
         </form.Field>
-      </section>
+        </FormSection>
+      </div>
 
       {/* Save — sticky on mobile */}
-      <div className="sticky bottom-0 mt-8 flex justify-end border-t border-border bg-background py-4 sm:static sm:border-0 sm:py-0">
-        <Button type="submit" disabled={mutation.isPending}>
+      <div className="sticky bottom-0 mt-6 flex justify-end border-t border-black/[0.06] bg-background py-4 sm:static sm:border-0 sm:py-0">
+        <Button
+          type="submit"
+          disabled={mutation.isPending}
+          className="rounded-full bg-foreground font-normal text-background transition-colors duration-200 ease-out hover:bg-foreground/90"
+        >
           {mutation.isPending ? 'Saving…' : 'Save profile'}
         </Button>
       </div>

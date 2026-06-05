@@ -20,10 +20,10 @@ export function TagPicker({ options, value, onChange }: TagPickerProps) {
             type="button"
             onClick={() => toggle(o)}
             className={[
-              'rounded-full px-3 py-1 text-xs font-medium transition-colors duration-150',
+              'rounded-full px-3.5 py-1.5 text-[13px] transition-colors duration-200 ease-out',
               on
-                ? 'bg-accent/60 text-accent-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/70',
+                ? 'bg-foreground text-background'
+                : 'border border-black/[0.06] bg-card text-muted-foreground hover:bg-muted/60 hover:text-foreground',
             ].join(' ')}
           >
             {cap(o)}
