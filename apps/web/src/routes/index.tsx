@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { meQuery } from '#/server/auth'
 import { redirectAuthenticatedHome } from '#/lib/auth-redirect'
+import { SITE_URL, landingJsonLd, landingMeta } from '#/lib/seo'
 import { Navbar } from '#/components/landing/Navbar'
 import { HeroSection } from '#/components/landing/HeroSection'
 import { EventTypes } from '#/components/landing/EventTypes'
 import { BeforeAfter } from '#/components/landing/BeforeAfter'
 import { HowItWorks } from '#/components/landing/HowItWorks'
 import { FeatureGrid } from '#/components/landing/FeatureGrid'
-// import { ProposalCards } from '#/components/landing/ProposalCards'
 import { ComparisonTable } from '#/components/landing/ComparisonTable'
 import { AIAnalysis } from '#/components/landing/AIAnalysis'
 import { StatsBar } from '#/components/landing/StatsBar'
@@ -23,6 +23,13 @@ export const Route = createFileRoute('/')({
     const user = await queryClient.fetchQuery(meQuery)
     redirectAuthenticatedHome(user)
   },
+  head: () => ({
+    meta: landingMeta(),
+    links: [{ rel: 'canonical', href: SITE_URL + '/' }],
+    scripts: [
+      { type: 'application/ld+json', children: landingJsonLd() },
+    ],
+  }),
   component: LandingPage,
 })
 
@@ -36,7 +43,6 @@ function LandingPage() {
         <BeforeAfter />
         <HowItWorks />
         <FeatureGrid />
-        {/* <ProposalCards /> */}
         <ComparisonTable />
         <AIAnalysis />
         <StatsBar />

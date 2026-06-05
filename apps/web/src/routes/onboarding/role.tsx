@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { apiClient } from '#/lib/api-client'
 import { authClient } from '#/lib/auth-client'
 import { meQuery } from '#/server/auth'
+import { noindexMeta } from '#/lib/seo'
 import { qk } from '#/lib/query-keys'
 import { RoleSelector } from '#/components/auth/RoleSelector'
 import { Button } from '#/components/ui/button'
@@ -17,6 +18,7 @@ const homeFor = (role: Role) => (role === 'venue_rep' ? '/venue/feed' : '/host/b
 export const Route = createFileRoute('/onboarding/role')({
   // Client-only: auth depends on the browser session cookie (see _app/route.tsx).
   ssr: false,
+  head: () => ({ meta: noindexMeta() }),
   beforeLoad: async ({ context: { queryClient }, location }) => {
     const user = await queryClient.fetchQuery(meQuery)
     if (!user) {

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { createFileRoute, Outlet, redirect, useRouter } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { meQuery } from '#/server/auth'
+import { noindexMeta } from '#/lib/seo'
 import { sse } from '#/lib/sse'
 import { UNAUTHORIZED_EVENT } from '#/lib/api-client'
 import { useSseInvalidations } from '#/hooks/use-sse-invalidations'
@@ -12,6 +13,8 @@ export const Route = createFileRoute('/_app')({
   // Render this subtree client-side so beforeLoad runs where the cookie is
   // available — otherwise a hard refresh redirects to /login.
   ssr: false,
+  // Everything behind auth is private — keep it out of search indexes.
+  head: () => ({ meta: noindexMeta() }),
   beforeLoad: async ({ context: { queryClient }, location }) => {
     const user = await queryClient.ensureQueryData(meQuery)
     if (!user) {

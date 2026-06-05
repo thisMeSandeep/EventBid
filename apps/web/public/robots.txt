@@ -1,3 +1,11 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /$
+Disallow: /host
+Disallow: /venue
+Disallow: /onboarding
+Disallow: /login
+Disallow: /register
+Disallow: /api
+
+Sitemap: https://event-bid.sandeepnayal.com/sitemap.xml
