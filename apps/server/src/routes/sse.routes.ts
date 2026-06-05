@@ -14,8 +14,17 @@ sseRoutes.get("/", requireAuth, async (c) => {
   const user = c.get("user");
   const lastEventId = c.req.header("Last-Event-ID") ?? null;
 
+  // Disable reverse-proxy buffering (Render/nginx) so events flush immediately
+  // instead of being held — otherwise the stream appears dead in production.
+  c.header("X-Accel-Buffering", "no");
+  c.header("Cache-Control", "no-cache, no-transform");
+
   return streamSSE(c, async (stream) => {
     adapters.notifier.register(user.id, stream);
+
+    // Flush a byte right away so proxies open the stream without waiting for the
+    // first real event (the 30s heartbeat is too late for proxy timeouts).
+    await stream.writeSSE({ event: "heartbeat", data: "" });
 
     if (lastEventId) {
       const missed = await repositories.notifications.findAfter(

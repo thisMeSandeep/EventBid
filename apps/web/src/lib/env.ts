@@ -1,7 +1,8 @@
 import { z } from 'zod'
 
 const envSchema = z.object({
-  VITE_API_URL: z.url(),
+  // Strip any trailing slash so `${VITE_API_URL}/api/...` never produces `//api`.
+  VITE_API_URL: z.url().transform((url) => url.replace(/\/+$/, '')),
   VITE_LOG_LEVEL: z
     .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent'])
     .default('info'),
