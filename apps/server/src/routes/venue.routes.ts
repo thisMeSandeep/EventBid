@@ -14,7 +14,18 @@ import type { AppEnv } from "../types/hono-env";
 const ALLOWED_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 const MAX_PHOTO_SIZE_BYTES = 5 * 1024 * 1024;
 
-const MATCHABLE_VENUE_FIELDS = ["styleTags", "amenities", "eventTypes"] as const;
+// Fields that feed the venue embedding or the hard filter. A change to any of
+// them must re-embed and re-run reverse matching.
+const MATCHABLE_VENUE_FIELDS = [
+  "name",
+  "description",
+  "city",
+  "state",
+  "maxCapacity",
+  "styleTags",
+  "amenities",
+  "eventTypes",
+] as const;
 
 export const venueRoutes = new Hono<AppEnv>();
 
@@ -204,13 +215,20 @@ function haveMatchableFieldsChanged(
   after: UpdateVenueDto,
 ): boolean {
   return MATCHABLE_VENUE_FIELDS.some((field) => {
-    if (after[field] === undefined) {
+    const next = (after as Record<string, unknown>)[field];
+    if (next === undefined) {
       return false;
     }
 
-    return (
-      normalizeStringArray(before[field]) !== normalizeStringArray(after[field])
-    );
+    const prev = (before as Record<string, unknown>)[field];
+    if (Array.isArray(prev) || Array.isArray(next)) {
+      return (
+        normalizeStringArray(prev as string[] | null | undefined) !==
+        normalizeStringArray(next as string[] | null | undefined)
+      );
+    }
+
+    return prev !== next;
   });
 }
 

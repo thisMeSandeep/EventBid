@@ -4,8 +4,19 @@ import type {
   QueueAdapter,
 } from "../adapters";
 import type { Repositories } from "../db/repositories";
-import type { Brief, CreateBriefVenueMatchInput } from "@eventbid/shared";
-import type { VenueEmbeddingScore } from "../db/repositories/venue.repository";
+import type { Brief, CreateBriefVenueMatchInput, Venue } from "@eventbid/shared";
+import {
+  buildBriefEmbeddingDocument,
+  cosineSimilarity,
+  isMatch,
+  scoreMatch,
+} from "./match-scoring";
+
+export interface ScoredMatch {
+  briefId: string;
+  venueId: string;
+  score: number;
+}
 
 export class MatchingService {
   constructor(
@@ -15,30 +26,52 @@ export class MatchingService {
     private readonly notifier: NotifierAdapter,
   ) {}
 
-  async matchBriefToVenues(briefId: string): Promise<VenueEmbeddingScore[]> {
+  /** Forward matching: a brief was created or edited — find venues that fit. */
+  async matchBriefToVenues(briefId: string): Promise<ScoredMatch[]> {
     const brief = await this.repos.briefs.findById(briefId);
     if (!brief) {
       throw new Error("Brief not found");
     }
 
-    const hardMatches = await this.repos.venues.findByHardFilters({
+    // Stage 1 — hard gate: city, event type, capacity.
+    const candidates = await this.repos.venues.findByHardFilters({
       city: brief.city,
       minCapacity: brief.headcount,
       eventType: brief.eventType,
     });
 
-    if (hardMatches.length === 0) {
+    if (candidates.length === 0) {
       return [];
     }
 
-    const briefEmbedding = await this.ai.embed(buildBriefEmbeddingDocument(brief));
-    const scoredMatches = await this.repos.venues.scoreByEmbedding(
-      hardMatches.map((venue) => venue.id),
+    // Stage 2 — composite score. Embedding cosine comes from pgvector; the rest
+    // (requirement coverage, capacity fit) is computed from the full objects.
+    const briefEmbedding = await this.ai.embed(
+      buildBriefEmbeddingDocument(brief),
+    );
+    const similarity = await this.semanticSimilarityByVenue(
+      candidates,
       briefEmbedding,
     );
 
+    const matches = candidates
+      .map((venue) => ({
+        venueId: venue.id,
+        ...scoreMatch(brief, venue, similarity.get(venue.id) ?? 0),
+      }))
+      .filter((match) => isMatch(match.score));
+
+    if (matches.length === 0) {
+      return [];
+    }
+
+    const alreadyMatched = await this.repos.briefVenueMatches.findMatchedVenueIds(
+      briefId,
+      matches.map((match) => match.venueId),
+    );
+
     await this.repos.briefVenueMatches.createBatch(
-      scoredMatches.map(
+      matches.map(
         ({ venueId, score }): CreateBriefVenueMatchInput => ({
           briefId,
           venueId,
@@ -47,38 +80,101 @@ export class MatchingService {
       ),
     );
 
+    // Notify only newly recorded matches, so re-matching after an edit refreshes
+    // scores without re-emailing venues already matched.
     await Promise.all(
-      scoredMatches.map(async ({ venueId }) => {
-        await this.queue.enqueue("email", {
-          type: "brief.matched",
-          briefId,
-          venueId,
-        });
-        await this.notifier.emit(venueId, "brief.matched", { briefId });
-      }),
+      matches
+        .filter(({ venueId }) => !alreadyMatched.has(venueId))
+        .map(async ({ venueId }) => {
+          await this.queue.enqueue("email", {
+            type: "brief.matched",
+            briefId,
+            venueId,
+          });
+          await this.notifier.emit(venueId, "brief.matched", { briefId });
+        }),
     );
 
-    return scoredMatches;
-  }
-}
-
-function buildBriefEmbeddingDocument(brief: Brief): string {
-  return [
-    `Event type: ${brief.eventType}`,
-    `Description: ${brief.description ?? ""}`,
-    `Requirements: ${formatList(brief.requirements)}`,
-    `Location: ${brief.city}, ${brief.state}`,
-    `Headcount: ${brief.headcount}`,
-    `Budget: ${brief.budgetMin} to ${brief.budgetMax}`,
-    `Event date range: ${brief.eventDateFrom} to ${brief.eventDateTo}`,
-    `Time of day: ${brief.timeOfDay ?? "not specified"}`,
-  ].join("\n");
-}
-
-function formatList(values: string[] | null): string {
-  if (!values || values.length === 0) {
-    return "none specified";
+    return matches.map(({ venueId, score }) => ({ briefId, venueId, score }));
   }
 
-  return values.join(", ");
+  /** Reverse matching: a venue joined or edited its profile — find active briefs
+   *  that fit, including older still-open ones. New matches notify the venue
+   *  in-app only (no email). */
+  async matchVenueToBriefs(venueId: string): Promise<ScoredMatch[]> {
+    const venue = await this.repos.venues.findById(venueId);
+    if (!venue?.embedding) {
+      return [];
+    }
+
+    // Stage 1 — hard gate against active briefs only.
+    const candidates = await this.repos.briefs.findActiveForVenue({
+      city: venue.city,
+      maxCapacity: venue.maxCapacity,
+      eventTypes: venue.eventTypes ?? [],
+    });
+
+    if (candidates.length === 0) {
+      return [];
+    }
+
+    // Stage 2 — composite score. Briefs aren't stored with embeddings, so embed
+    // each candidate on the fly and cosine-compare to the venue's embedding.
+    const venueEmbedding = venue.embedding;
+    const matches = (
+      await Promise.all(
+        candidates.map(async (brief) => {
+          const briefEmbedding = await this.ai.embed(
+            buildBriefEmbeddingDocument(brief),
+          );
+          const similarity = cosineSimilarity(venueEmbedding, briefEmbedding);
+          return {
+            briefId: brief.id,
+            ...scoreMatch(brief, venue, similarity),
+          };
+        }),
+      )
+    ).filter((match) => isMatch(match.score));
+
+    if (matches.length === 0) {
+      return [];
+    }
+
+    const alreadyMatched = await this.repos.briefVenueMatches.findMatchedBriefIds(
+      venueId,
+      matches.map((match) => match.briefId),
+    );
+
+    await this.repos.briefVenueMatches.createBatch(
+      matches.map(
+        ({ briefId, score }): CreateBriefVenueMatchInput => ({
+          briefId,
+          venueId,
+          matchScore: score,
+        }),
+      ),
+    );
+
+    await Promise.all(
+      matches
+        .filter(({ briefId }) => !alreadyMatched.has(briefId))
+        .map(({ briefId }) =>
+          this.notifier.emit(venueId, "brief.matched", { briefId }),
+        ),
+    );
+
+    return matches.map(({ briefId, score }) => ({ briefId, venueId, score }));
+  }
+
+  /** Map each candidate venue id to its embedding cosine similarity. */
+  private async semanticSimilarityByVenue(
+    venues: Venue[],
+    briefEmbedding: number[],
+  ): Promise<Map<string, number>> {
+    const scores = await this.repos.venues.scoreByEmbedding(
+      venues.map((venue) => venue.id),
+      briefEmbedding,
+    );
+    return new Map(scores.map(({ venueId, score }) => [venueId, score]));
+  }
 }

@@ -126,6 +126,15 @@ briefRoutes.patch("/:id", requireAuth, requireRole("host"), async (c) => {
     toBriefUpdateInput(parsed.data),
   );
 
+  // Re-match when fields that feed the brief embedding or hard filter change,
+  // so the brief's matches (and scores) reflect the edit.
+  if (haveMatchableBriefFieldsChanged(existing, parsed.data)) {
+    await adapters.queue.enqueue("matching", {
+      type: "match-brief",
+      briefId: brief.id,
+    });
+  }
+
   return c.json(brief);
 });
 
@@ -260,4 +269,43 @@ function toBriefUpdateInput(data: UpdateBriefDto) {
 
 function toDateString(value: Date): string {
   return value.toISOString().slice(0, 10);
+}
+
+// Fields that feed the brief embedding or the hard filter. A change to any of
+// them should re-run matching so matches and scores reflect the edit.
+const MATCHABLE_BRIEF_FIELDS = [
+  "eventType",
+  "eventDateFrom",
+  "eventDateTo",
+  "timeOfDay",
+  "headcount",
+  "city",
+  "state",
+  "budgetMin",
+  "budgetMax",
+  "requirements",
+  "description",
+] as const;
+
+function haveMatchableBriefFieldsChanged(
+  before: Brief,
+  after: UpdateBriefDto,
+): boolean {
+  return MATCHABLE_BRIEF_FIELDS.some((field) => {
+    const next = (after as Record<string, unknown>)[field];
+    if (next === undefined) {
+      return false;
+    }
+
+    const prev = (before as Record<string, unknown>)[field];
+    if (Array.isArray(prev) || Array.isArray(next)) {
+      return normalizeArray(prev) !== normalizeArray(next);
+    }
+
+    return String(prev ?? "") !== String(next ?? "");
+  });
+}
+
+function normalizeArray(value: unknown): string {
+  return JSON.stringify([...((value as string[] | null) ?? [])].sort());
 }

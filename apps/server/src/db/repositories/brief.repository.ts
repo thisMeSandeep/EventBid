@@ -1,4 +1,4 @@
-import { and, desc, eq, lt, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, lt, lte, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type {
   Brief,
@@ -30,6 +30,33 @@ export class BriefRepository {
       .from(briefs)
       .where(whereClause)
       .orderBy(desc(briefs.createdAt));
+  }
+
+  /** Active briefs (open, deadline in the future) that hard-match a venue:
+   *  same city, headcount within the venue's capacity, and an event type the
+   *  venue serves. Used for reverse matching when a venue joins/updates. */
+  async findActiveForVenue(params: {
+    city: string;
+    maxCapacity: number;
+    eventTypes: string[];
+  }): Promise<Brief[]> {
+    const { city, maxCapacity, eventTypes } = params;
+    if (eventTypes.length === 0) {
+      return [];
+    }
+
+    return this.db
+      .select()
+      .from(briefs)
+      .where(
+        and(
+          eq(briefs.status, "open"),
+          gt(briefs.deadline, sql`now()`),
+          eq(briefs.city, city),
+          lte(briefs.headcount, maxCapacity),
+          inArray(briefs.eventType, eventTypes),
+        ),
+      );
   }
 
   async findOpenPastDeadline(): Promise<Brief[]> {

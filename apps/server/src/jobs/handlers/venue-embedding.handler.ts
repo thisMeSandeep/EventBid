@@ -5,5 +5,9 @@ export async function venueEmbeddingHandler(
   payload: JobPayload,
   { services }: JobDependencies,
 ): Promise<void> {
-  await services.venueEmbedding.generateAndStore(payload.venueId as string);
+  const venueId = payload.venueId as string;
+  // Embed first, then reverse-match against active briefs so the venue picks up
+  // older still-open briefs (on signup or after a matchable profile edit).
+  await services.venueEmbedding.generateAndStore(venueId);
+  await services.matching.matchVenueToBriefs(venueId);
 }

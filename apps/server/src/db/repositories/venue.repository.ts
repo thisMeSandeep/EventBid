@@ -88,10 +88,9 @@ export class VenueRepository {
       return [];
     }
 
-    const vectorLiteral = sql`ARRAY[${sql.join(
-      embedding.map((value) => sql`${value}`),
-      sql`, `,
-    )}]::vector`;
+    // pgvector accepts its text form ('[0.1,0.2,...]') cast to vector. Building
+    // an ARRAY[...] of bound params yields a text[], which cannot cast to vector.
+    const vectorLiteral = sql`${JSON.stringify(embedding)}::vector`;
 
     const rows = await this.db.execute<{ venueId: string; score: number }>(
       sql`

@@ -1,4 +1,4 @@
-import { and, desc, eq, lt } from "drizzle-orm";
+import { and, desc, eq, inArray, lt, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type {
   Brief,
@@ -12,6 +12,8 @@ export type BriefVenueMatchWithBrief = BriefVenueMatch & { brief: Brief };
 export class BriefVenueMatchRepository {
   constructor(private readonly db: PostgresJsDatabase) {}
 
+  /** Upsert matches: insert new (brief, venue) pairs and refresh the score on
+   *  existing ones so re-matching after an edit keeps scores current. */
   async createBatch(matches: CreateBriefVenueMatchInput[]): Promise<void> {
     if (matches.length === 0) {
       return;
@@ -20,7 +22,54 @@ export class BriefVenueMatchRepository {
     await this.db
       .insert(briefVenueMatches)
       .values(matches)
-      .onConflictDoNothing();
+      .onConflictDoUpdate({
+        target: [briefVenueMatches.briefId, briefVenueMatches.venueId],
+        set: { matchScore: sql`excluded.match_score` },
+      });
+  }
+
+  /** Of the given venueIds, which are already matched to this brief. */
+  async findMatchedVenueIds(
+    briefId: string,
+    venueIds: string[],
+  ): Promise<Set<string>> {
+    if (venueIds.length === 0) {
+      return new Set();
+    }
+
+    const rows = await this.db
+      .select({ venueId: briefVenueMatches.venueId })
+      .from(briefVenueMatches)
+      .where(
+        and(
+          eq(briefVenueMatches.briefId, briefId),
+          inArray(briefVenueMatches.venueId, venueIds),
+        ),
+      );
+
+    return new Set(rows.map((row) => row.venueId));
+  }
+
+  /** Of the given briefIds, which are already matched to this venue. */
+  async findMatchedBriefIds(
+    venueId: string,
+    briefIds: string[],
+  ): Promise<Set<string>> {
+    if (briefIds.length === 0) {
+      return new Set();
+    }
+
+    const rows = await this.db
+      .select({ briefId: briefVenueMatches.briefId })
+      .from(briefVenueMatches)
+      .where(
+        and(
+          eq(briefVenueMatches.venueId, venueId),
+          inArray(briefVenueMatches.briefId, briefIds),
+        ),
+      );
+
+    return new Set(rows.map((row) => row.briefId));
   }
 
   async findByVenueId(
