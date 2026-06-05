@@ -56,8 +56,8 @@ function AppShell() {
   return (
     <div className="min-h-screen bg-background">
       <NavBar user={user} />
-      {/* pt-14 offsets the fixed nav height */}
-      <main className="pt-14">
+      {/* pt-16 offsets the fixed nav height */}
+      <main className="pt-16">
         <Outlet />
       </main>
     </div>

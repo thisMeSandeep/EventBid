@@ -8,6 +8,7 @@ import { meQuery } from '#/server/auth'
 import { qk } from '#/lib/query-keys'
 import { RoleSelector } from '#/components/auth/RoleSelector'
 import { Button } from '#/components/ui/button'
+import logo from '#/assets/logo.svg'
 
 type Role = 'host' | 'venue_rep'
 
@@ -61,23 +62,24 @@ function RolePage() {
   const firstName = user.name.split(' ')[0]
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-12">
-      <div className="w-full max-w-sm">
+    <div className="flex min-h-screen items-center justify-center px-6 py-12">
+      <div className="w-full max-w-md">
         {/* Wordmark */}
-        <div className="text-center mb-8">
-          <span className="text-2xl font-semibold text-foreground tracking-tight">
-            EventBid
-          </span>
-        </div>
+        <a href="/" className="mb-10 flex items-center justify-center gap-2">
+          <img src={logo} alt="EventBid" className="h-7 w-auto" />
+          <span className="text-[17px] text-foreground">EventBid</span>
+        </a>
 
         {/* Heading */}
-        <h1 className="text-2xl font-semibold text-foreground">
-          {firstName ? `Welcome, ${firstName}` : 'Welcome'}
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">How will you use EventBid?</p>
+        <div className="text-center">
+          <h1 className="font-serif text-[32px] font-normal tracking-[-0.01em] text-foreground">
+            {firstName ? `Welcome, ${firstName}` : 'Welcome'}
+          </h1>
+          <p className="mt-2 text-[15px] text-muted-foreground">How will you use EventBid?</p>
+        </div>
 
         {/* Role selector */}
-        <div className="mt-6 space-y-2">
+        <div className="mt-10 space-y-3">
           <RoleSelector
             value={role}
             onChange={(r) => {
@@ -85,12 +87,12 @@ function RolePage() {
               setError(null)
             }}
           />
-          {error && <p className="text-destructive text-xs">{error}</p>}
+          {error && <p className="text-destructive text-[13px]">{error}</p>}
         </div>
 
         {/* Continue */}
         <Button
-          className="w-full mt-6"
+          className="mt-8 h-11 w-full rounded-full bg-foreground font-normal text-background transition-colors duration-200 ease-out hover:bg-foreground/90"
           disabled={roleMutation.isPending}
           onClick={() => {
             if (!role) {
@@ -104,13 +106,13 @@ function RolePage() {
         </Button>
 
         {/* Escape hatch */}
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-8 text-center text-sm text-muted-foreground">
           Not you?{' '}
           <button
             type="button"
             onClick={() => signOutMutation.mutate()}
             disabled={signOutMutation.isPending}
-            className="text-foreground font-medium underline-offset-4 hover:underline"
+            className="font-medium text-foreground underline-offset-4 hover:underline"
           >
             {signOutMutation.isPending ? 'Signing out…' : 'Sign out'}
           </button>

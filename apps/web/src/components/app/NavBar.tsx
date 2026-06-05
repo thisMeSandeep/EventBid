@@ -11,6 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '#/components/ui/sheet'
+import logo from '#/assets/logo.svg'
 
 interface NavLink {
   to: string
@@ -28,6 +29,9 @@ function getNavLinks(role: SessionUser['role']): NavLink[] {
   ]
 }
 
+const linkClass =
+  'rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-colors duration-200 ease-out hover:bg-muted/60 hover:text-foreground data-[status=active]:bg-muted data-[status=active]:font-medium data-[status=active]:text-foreground'
+
 interface NavBarProps {
   user: SessionUser
 }
@@ -37,60 +41,53 @@ export function NavBar({ user }: NavBarProps) {
   const links = getNavLinks(user.role)
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 h-14 border-b border-border bg-card">
+    <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-black/[0.06] bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-full max-w-5xl items-center justify-between px-6">
-        {/* Logo */}
-        <Link
-          to="/"
-          className="text-base font-semibold text-foreground tracking-tight"
-        >
-          EventBid
-        </Link>
+        <div className="flex items-center gap-8">
+          <Link to="/" className="flex items-center gap-2">
+            <img src={logo} alt="EventBid" className="h-7 w-auto" />
+            <span className="text-[17px] text-foreground">EventBid</span>
+          </Link>
 
-        {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-6">
-          {links.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground"
-              activeProps={{ className: 'text-primary font-medium' }}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+          {/* Desktop nav links */}
+          <nav className="hidden items-center gap-1 md:flex">
+            {links.map((link) => (
+              <Link key={link.to} to={link.to} className={linkClass}>
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5">
           <NotificationBell user={user} />
-
           <UserMenu user={user} />
 
           {/* Mobile hamburger */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <button
-                className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:text-foreground md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors duration-200 ease-out hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
                 aria-label="Open menu"
               >
-                <Menu className="h-4 w-4" />
+                <Menu className="h-[18px] w-[18px]" strokeWidth={1.5} />
               </button>
             </SheetTrigger>
             <SheetContent side="left" className="w-72 bg-card">
-              <SheetHeader className="mb-6">
-                <SheetTitle className="text-left text-base font-semibold text-foreground">
-                  EventBid
+              <SheetHeader className="mb-4">
+                <SheetTitle className="flex items-center gap-2 text-left">
+                  <img src={logo} alt="" className="h-6 w-auto" />
+                  <span className="text-[16px] font-normal text-foreground">EventBid</span>
                 </SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col">
+              <nav className="flex flex-col gap-1">
                 {links.map((link) => (
                   <Link
                     key={link.to}
                     to={link.to}
                     onClick={() => setMobileOpen(false)}
-                    className="py-4 text-lg text-muted-foreground transition-colors duration-150 hover:text-foreground border-b border-border"
-                    activeProps={{ className: 'text-primary font-medium' }}
+                    className="rounded-lg px-3 py-2.5 text-[15px] text-muted-foreground transition-colors duration-200 ease-out hover:bg-muted/60 hover:text-foreground data-[status=active]:bg-muted data-[status=active]:font-medium data-[status=active]:text-foreground"
                   >
                     {link.label}
                   </Link>

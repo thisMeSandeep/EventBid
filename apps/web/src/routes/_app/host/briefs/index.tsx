@@ -19,8 +19,10 @@ export const Route = createFileRoute('/_app/host/briefs/')({
     queryClient.ensureQueryData(briefsListQuery({ cursor: deps.cursor })),
   component: HostBriefsPage,
   pendingComponent: () => (
-    <div className="mx-auto max-w-3xl px-6 py-8">
-      <h1 className="text-xl font-semibold text-foreground">My Briefs</h1>
+    <div className="mx-auto max-w-3xl px-6 py-10">
+      <h1 className="font-serif text-[28px] font-normal tracking-[-0.01em] text-foreground">
+        My briefs
+      </h1>
       <div className="mt-8">
         <ListSkeleton />
       </div>
@@ -44,16 +46,21 @@ function HostBriefsPage() {
   const briefs = (data?.data ?? []).filter((b) => !status || b.status === status)
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-foreground">My Briefs</h1>
-        <Button asChild size="sm">
-          <Link to="/host/briefs/new">Create Brief</Link>
+    <div className="mx-auto max-w-3xl px-6 py-10">
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-serif text-[28px] font-normal tracking-[-0.01em] text-foreground">
+          My briefs
+        </h1>
+        <Button
+          asChild
+          className="rounded-full bg-foreground font-normal text-background transition-colors duration-200 ease-out hover:bg-foreground/90"
+        >
+          <Link to="/host/briefs/new">Create brief</Link>
         </Button>
       </div>
 
       {/* Status filter pills */}
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => {
           const active = status === f.value || (!status && !f.value)
           return (
@@ -66,10 +73,10 @@ function HostBriefsPage() {
                 })
               }
               className={[
-                'rounded-full px-3 py-1 text-xs font-medium transition-colors duration-150',
+                'rounded-full px-3.5 py-1.5 text-[13px] transition-colors duration-200 ease-out',
                 active
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/70',
+                  ? 'bg-foreground text-background'
+                  : 'border border-black/[0.06] bg-card text-muted-foreground hover:bg-muted/60 hover:text-foreground',
               ].join(' ')}
             >
               {f.label}
@@ -78,19 +85,22 @@ function HostBriefsPage() {
         })}
       </div>
 
-      <div className="mt-4">
+      <div className="mt-8">
         {briefs.length === 0 ? (
           <EmptyState
             title="No briefs yet"
             description="Create your first brief to start receiving proposals from venues."
             action={
-              <Button asChild>
-                <Link to="/host/briefs/new">Create Brief</Link>
+              <Button
+                asChild
+                className="rounded-full bg-foreground font-normal text-background hover:bg-foreground/90"
+              >
+                <Link to="/host/briefs/new">Create brief</Link>
               </Button>
             }
           />
         ) : (
-          <div>
+          <div className="space-y-3">
             {briefs.map((brief) => (
               <BriefListRow key={brief.id} brief={brief} />
             ))}

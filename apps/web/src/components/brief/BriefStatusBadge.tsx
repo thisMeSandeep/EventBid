@@ -3,8 +3,8 @@ interface BriefStatusBadgeProps {
 }
 
 const styles: Record<string, string> = {
-  open: 'bg-emerald-100 text-emerald-800',
-  evaluating: 'bg-amber-100 text-amber-800',
+  open: 'bg-emerald-50 text-emerald-700',
+  evaluating: 'bg-accent text-primary',
   closed: 'bg-muted text-muted-foreground',
   expired: 'bg-destructive/10 text-destructive',
 }
