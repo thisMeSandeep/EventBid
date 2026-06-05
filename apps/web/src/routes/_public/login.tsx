@@ -1,6 +1,7 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { meQuery } from '#/server/auth'
+import { redirectAuthenticatedHome } from '#/lib/auth-redirect'
 import { LoginForm } from '#/components/auth/LoginForm'
 
 const searchSchema = z.object({
@@ -11,7 +12,7 @@ export const Route = createFileRoute('/_public/login')({
   validateSearch: searchSchema,
   beforeLoad: async ({ context: { queryClient } }) => {
     const user = await queryClient.fetchQuery(meQuery)
-    if (user) throw redirect({ to: '/' })
+    redirectAuthenticatedHome(user)
   },
   component: LoginPage,
 })

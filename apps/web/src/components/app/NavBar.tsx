@@ -39,12 +39,14 @@ interface NavBarProps {
 export function NavBar({ user }: NavBarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const links = getNavLinks(user.role)
+  // Keep the logo inside the app — never bounce a signed-in user to the landing page.
+  const homeTo = user.role === 'host' ? '/host/briefs' : '/venue/feed'
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-black/[0.06] bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-full max-w-5xl items-center justify-between px-6">
         <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to={homeTo} className="flex items-center gap-2">
             <img src={logo} alt="EventBid" className="h-7 w-auto" />
             <span className="text-[17px] text-foreground">EventBid</span>
           </Link>

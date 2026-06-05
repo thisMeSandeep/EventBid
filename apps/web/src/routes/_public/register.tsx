@@ -1,11 +1,12 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { meQuery } from '#/server/auth'
+import { redirectAuthenticatedHome } from '#/lib/auth-redirect'
 import { RegisterForm } from '#/components/auth/RegisterForm'
 
 export const Route = createFileRoute('/_public/register')({
   beforeLoad: async ({ context: { queryClient } }) => {
     const user = await queryClient.fetchQuery(meQuery)
-    if (user) throw redirect({ to: '/' })
+    redirectAuthenticatedHome(user)
   },
   component: RegisterPage,
 })

@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { meQuery } from '#/server/auth'
+import { redirectAuthenticatedHome } from '#/lib/auth-redirect'
 import { Navbar } from '#/components/landing/Navbar'
 import { HeroSection } from '#/components/landing/HeroSection'
 import { EventTypes } from '#/components/landing/EventTypes'
@@ -15,7 +17,14 @@ import { CTABanner } from '#/components/landing/CTABanner'
 import { FAQ } from '#/components/landing/FAQ'
 import { Footer } from '#/components/landing/Footer'
 
-export const Route = createFileRoute('/')({ component: LandingPage })
+export const Route = createFileRoute('/')({
+  // Logged-in users don't belong on the marketing page — send them to the app.
+  beforeLoad: async ({ context: { queryClient } }) => {
+    const user = await queryClient.fetchQuery(meQuery)
+    redirectAuthenticatedHome(user)
+  },
+  component: LandingPage,
+})
 
 function LandingPage() {
   return (
