@@ -25,16 +25,16 @@ import { services } from "./services";
 
 export const API_BASE_PATH = "/api";
 
-const app = new Hono();
+const app = new Hono(); 
 
 app.get("/health", (c) => c.json({ status: "ok" }));
 
-const api = new Hono().basePath(API_BASE_PATH);
+const api = new Hono().basePath(API_BASE_PATH); // All API routes will be prefixed with /api
 
-api.onError(errorHandler);
-api.use(requestLogger);
+api.onError(errorHandler);  // Global error handler for API routes
+api.use(requestLogger); 
 api.use("/*", corsMiddleware);
-api.use(prettyJSON());
+api.use(prettyJSON());  // Pretty JSON responses for easier debugging during development
 
 api.route("/", authRoutes);
 api.route("/briefs", briefRoutes);
@@ -64,7 +64,7 @@ async function start() {
     logger.info("Job workers started");
   } else if (env.NODE_ENV === "development") {
     logger.warn(
-      "Redis unavailable — job workers not started. Run: docker compose up -d redis",
+      "Redis unavailable — job workers not started.",
     );
   } else {
     logger.error("Redis connection failed in production");

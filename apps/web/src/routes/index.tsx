@@ -5,7 +5,7 @@ import { EventTypes } from '#/components/landing/EventTypes'
 import { BeforeAfter } from '#/components/landing/BeforeAfter'
 import { HowItWorks } from '#/components/landing/HowItWorks'
 import { FeatureGrid } from '#/components/landing/FeatureGrid'
-import { ProposalCards } from '#/components/landing/ProposalCards'
+// import { ProposalCards } from '#/components/landing/ProposalCards'
 import { ComparisonTable } from '#/components/landing/ComparisonTable'
 import { AIAnalysis } from '#/components/landing/AIAnalysis'
 import { StatsBar } from '#/components/landing/StatsBar'
@@ -27,7 +27,7 @@ function LandingPage() {
         <BeforeAfter />
         <HowItWorks />
         <FeatureGrid />
-        <ProposalCards />
+        {/* <ProposalCards /> */}
         <ComparisonTable />
         <AIAnalysis />
         <StatsBar />
