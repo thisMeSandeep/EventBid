@@ -8,6 +8,13 @@
       "when": 1780308140752,
       "tag": "0000_stale_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1780658447721,
+      "tag": "0001_flaky_the_captain",
+      "breakpoints": true
     }
   ]
 }
