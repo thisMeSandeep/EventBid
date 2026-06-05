@@ -25,10 +25,10 @@ export function EventBasicsStep({ form }: { form: BriefWizardForm }) {
                     type="button"
                     onClick={() => field.handleChange(t.value)}
                     className={[
-                      'rounded-lg border p-3 text-sm font-medium transition-colors duration-150',
+                      'rounded-lg border p-3 text-sm font-medium transition-colors duration-200 ease-out',
                       selected
-                        ? 'border-primary bg-accent text-accent-foreground'
-                        : 'border-border bg-card text-foreground hover:bg-muted/50',
+                        ? 'border-foreground bg-foreground text-background'
+                        : 'border-black/[0.06] bg-card text-foreground hover:bg-muted/60',
                     ].join(' ')}
                   >
                     {t.label}
