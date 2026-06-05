@@ -13,12 +13,18 @@ export class ResendEmailAdapter implements EmailAdapter {
   async send(to: string, template: EmailTemplate): Promise<void> {
     const { subject, html } = await renderTemplate(template);
 
-    await this.client.emails.send({
+    const { error } = await this.client.emails.send({
       from: env.EMAIL_FROM,
       to,
       subject,
       html,
     });
+
+    // The Resend SDK does not throw on API rejection — it returns the error in
+    // the response. Throw so the job fails, retries, and is visible in logs.
+    if (error) {
+      throw new Error(`Resend failed to send email: ${error.message}`);
+    }
   }
 }
 

@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 import { APIError } from "better-auth/api";
 import { auth } from "../lib/auth";
 import { db } from "../db/client";
+import { adapters } from "../adapters";
 import { AppError } from "../lib/errors";
 import { logger } from "../lib/logger";
 
@@ -104,6 +105,19 @@ authRoutes.post("/auth/role", async (c) => {
   const { role } = parsed.data;
   await db.execute(sql`UPDATE "user" SET role = ${role} WHERE id = ${session.user.id}`);
   logger.info({ userId: session.user.id, role }, "User role set");
+
+  // Enqueue a one-time welcome email. Don't fail role selection if enqueue fails.
+  try {
+    await adapters.queue.enqueue("email", {
+      type: "welcome",
+      email: session.user.email,
+      name: session.user.name,
+      role,
+    });
+    logger.info({ userId: session.user.id, email: session.user.email }, "Welcome email enqueued");
+  } catch (err) {
+    logger.error({ err, userId: session.user.id }, "Failed to enqueue welcome email");
+  }
 
   return c.json({ role });
 });

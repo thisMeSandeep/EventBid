@@ -1,6 +1,7 @@
 import type { Brief } from "@eventbid/shared";
 import type { JobDependencies } from "../engine";
 import type { JobPayload } from "../../adapters/queue/queue.adapter.interface";
+import { logger } from "../../lib/logger";
 
 export async function emailHandler(
   payload: JobPayload,
@@ -15,6 +16,9 @@ export async function emailHandler(
       return;
     case "brief.closed":
       await sendBriefClosedEmails(payload, repositories, adapters);
+      return;
+    case "welcome":
+      await sendWelcomeEmail(payload, adapters);
       return;
     default:
       throw new Error(`Unknown email job type: ${payload.type}`);
@@ -121,6 +125,27 @@ async function sendBriefClosedEmails(
       },
     });
   }
+}
+
+async function sendWelcomeEmail(
+  payload: JobPayload,
+  adapters: JobDependencies["adapters"],
+): Promise<void> {
+  const email = payload.email as string;
+  const name = payload.name as string | undefined;
+  const role = payload.role as "host" | "venue_rep";
+
+  if (!email) {
+    logger.warn("Welcome email job missing recipient email");
+    return;
+  }
+
+  logger.info({ email, role }, "Sending welcome email");
+  await adapters.email.send(email, {
+    type: "welcome",
+    data: { name, role },
+  });
+  logger.info({ email, role }, "Welcome email sent");
 }
 
 function formatBriefTitle(brief: Brief): string {

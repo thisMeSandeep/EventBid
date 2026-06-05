@@ -20,13 +20,15 @@ import {
   BriefExpiredEmail,
   type BriefExpiredData,
 } from "./templates/brief-expired";
+import { WelcomeEmail, type WelcomeData } from "./templates/welcome";
 
 export type EmailTemplate =
   | { type: "new-brief-match"; data: NewBriefMatchData }
   | { type: "proposal-accepted"; data: ProposalAcceptedData }
   | { type: "brief-closed"; data: BriefClosedData }
   | { type: "deadline-reminder"; data: DeadlineReminderData }
-  | { type: "brief-expired"; data: BriefExpiredData };
+  | { type: "brief-expired"; data: BriefExpiredData }
+  | { type: "welcome"; data: WelcomeData };
 
 export interface RenderedEmail {
   subject: string;
@@ -62,6 +64,11 @@ export async function renderTemplate(
         subject: "An EventBid brief expired",
         html: await render(createElement(BriefExpiredEmail, template.data)),
       };
+    case "welcome":
+      return {
+        subject: "Welcome to EventBid",
+        html: await render(createElement(WelcomeEmail, template.data)),
+      };
   }
 }
 
@@ -71,9 +78,11 @@ export type {
   DeadlineReminderData,
   NewBriefMatchData,
   ProposalAcceptedData,
+  WelcomeData,
 };
 export { BriefClosedEmail } from "./templates/brief-closed";
 export { BriefExpiredEmail } from "./templates/brief-expired";
 export { DeadlineReminderEmail } from "./templates/deadline-reminder";
 export { NewBriefMatchEmail } from "./templates/new-brief-match";
 export { ProposalAcceptedEmail } from "./templates/proposal-accepted";
+export { WelcomeEmail } from "./templates/welcome";
