@@ -5,7 +5,10 @@ export const qk = {
       ['briefs', 'list', cursor ?? null, status ?? null] as const,
     detail: (id: string) => ['briefs', id] as const,
     analysis: (id: string) => ['briefs', id, 'analysis'] as const,
+    venueAnalysis: (id: string) => ['briefs', id, 'venue-analysis'] as const,
     proposals: (id: string) => ['briefs', id, 'proposals'] as const,
+    proposalAnalysis: (id: string, proposalId: string) =>
+      ['briefs', id, 'proposals', proposalId, 'analysis'] as const,
   },
   venues: {
     me: ['venues', 'me'] as const,

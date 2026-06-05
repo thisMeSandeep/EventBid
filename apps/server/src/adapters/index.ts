@@ -19,6 +19,8 @@ export type {
   AnalysisResult,
   BriefDescriptionImprovement,
   BriefQualityResult,
+  BriefWinGuideResult,
+  ProposalAnalysisResult,
 } from "./ai/ai.provider.interface";
 export { VercelAIProvider } from "./ai/vercel-ai.provider";
 

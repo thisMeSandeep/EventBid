@@ -1,5 +1,11 @@
 import { queryOptions } from '@tanstack/react-query'
-import type { AiAnalysis, Brief, Proposal } from '@eventbid/shared'
+import type {
+  AiAnalysis,
+  Brief,
+  BriefAnalysis,
+  Proposal,
+  ProposalAnalysis,
+} from '@eventbid/shared'
 import { apiClient } from '#/lib/api-client'
 import { qk } from '#/lib/query-keys'
 
@@ -55,3 +61,40 @@ export const analysisQuery = (briefId: string) =>
     queryFn: () =>
       apiClient.get<AiAnalysis>(`/api/briefs/${briefId}/analysis`),
   })
+
+// Per-proposal AI analysis (host). Polls while it's still being generated.
+export const proposalAnalysisQuery = (briefId: string, proposalId: string) =>
+  queryOptions({
+    queryKey: qk.briefs.proposalAnalysis(briefId, proposalId),
+    queryFn: () =>
+      apiClient.get<ProposalAnalysis>(
+        `/api/briefs/${briefId}/proposals/${proposalId}/analysis`,
+      ),
+    refetchInterval: (query) =>
+      query.state.data?.status === 'pending' ? 4000 : false,
+  })
+
+// Per-brief "how to win" guide (venue). Polls while it's still being generated.
+export const briefWinGuideQuery = (briefId: string) =>
+  queryOptions({
+    queryKey: qk.briefs.venueAnalysis(briefId),
+    queryFn: () =>
+      apiClient.get<BriefAnalysis>(`/api/briefs/${briefId}/venue-analysis`),
+    refetchInterval: (query) =>
+      query.state.data?.status === 'pending' ? 4000 : false,
+  })
+
+export const regenerateProposalAnalysis = (
+  briefId: string,
+  proposalId: string,
+) =>
+  apiClient.post<{ status: string }>(
+    `/api/briefs/${briefId}/proposals/${proposalId}/analysis/regenerate`,
+    {},
+  )
+
+export const regenerateBriefWinGuide = (briefId: string) =>
+  apiClient.post<{ status: string }>(
+    `/api/briefs/${briefId}/venue-analysis/regenerate`,
+    {},
+  )

@@ -86,6 +86,7 @@ briefProposalRoutes.post(
     });
 
     await maybeEnqueueAiAnalysis(briefId);
+    await enqueueProposalAnalysis(proposal.id);
 
     return c.json(proposal, 201);
   },
@@ -139,6 +140,7 @@ briefProposalRoutes.patch(
     });
 
     await maybeEnqueueAiAnalysis(briefId);
+    await enqueueProposalAnalysis(proposal.id);
 
     return c.json(proposal);
   },
@@ -271,6 +273,14 @@ async function maybeEnqueueAiAnalysis(briefId: string): Promise<void> {
       briefId,
     });
   }
+}
+
+// Per-proposal analysis, generated once in the background after creation.
+async function enqueueProposalAnalysis(proposalId: string): Promise<void> {
+  await adapters.queue.enqueue("proposal-analysis", {
+    type: "proposal-analysis",
+    proposalId,
+  });
 }
 
 function toProposalInput(data: CreateProposalDto) {

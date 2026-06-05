@@ -19,6 +19,7 @@ export type {
 export type {
   AiAnalysis,
   Brief,
+  BriefAnalysis,
   BriefStatus,
   BriefVenueMatch,
   CreateAiAnalysisInput,
@@ -30,7 +31,9 @@ export type {
   CreateVenuePhotoInput,
   Notification,
   Proposal,
+  ProposalAnalysis,
   ProposalStatus,
+  ProposalSubScores,
   UpdateBriefInput,
   UpdateProposalInput,
   UpdateVenueInput,

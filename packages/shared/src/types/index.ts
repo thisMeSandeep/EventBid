@@ -1,6 +1,7 @@
 export type {
   AiAnalysis,
   Brief,
+  BriefAnalysis,
   BriefVenueMatch,
   BriefStatus,
   CreateAiAnalysisInput,
@@ -8,6 +9,8 @@ export type {
   CreateBriefVenueMatchInput,
   CreateNotificationInput,
   Notification,
+  ProposalAnalysis,
+  ProposalSubScores,
   UpdateBriefInput,
 } from "./brief.types";
 export type {

@@ -1,10 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
-import { briefQuery } from '#/server/briefs'
+import {
+  briefQuery,
+  briefWinGuideQuery,
+  regenerateBriefWinGuide,
+} from '#/server/briefs'
 import { myProposalsForBriefQuery } from '#/server/proposals'
+import { qk } from '#/lib/query-keys'
 import { BriefSummaryBlock } from '#/components/brief/BriefSummaryBlock'
 import { VenueProposalCard } from '#/components/proposal/VenueProposalCard'
+import { BriefWinGuideCard } from '#/components/analysis/BriefWinGuideCard'
 import { Button } from '#/components/ui/button'
 
 export const Route = createFileRoute('/_app/venue/briefs/$briefId/')({
@@ -19,6 +25,15 @@ function VenueBriefReadPage() {
   const { briefId } = Route.useParams()
   const { data: brief } = useQuery(briefQuery(briefId))
   const { data: proposals = [] } = useQuery(myProposalsForBriefQuery(briefId))
+  const { data: winGuide } = useQuery(briefWinGuideQuery(briefId))
+  const queryClient = useQueryClient()
+  const regenerateGuide = useMutation({
+    mutationFn: () => regenerateBriefWinGuide(briefId),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: qk.briefs.venueAnalysis(briefId),
+      }),
+  })
 
   if (!brief) return null
 
@@ -60,6 +75,17 @@ function VenueBriefReadPage() {
         <p className="mt-4 text-sm text-muted-foreground">
           This brief is no longer accepting proposals.
         </p>
+      )}
+
+      {/* AI "how to win" guidance for venues */}
+      {isOpen && winGuide && (
+        <div className="mt-6">
+          <BriefWinGuideCard
+            analysis={winGuide}
+            onRegenerate={() => regenerateGuide.mutate()}
+            isRegenerating={regenerateGuide.isPending}
+          />
+        </div>
       )}
 
       {/* The venue rep's own proposals for this brief */}

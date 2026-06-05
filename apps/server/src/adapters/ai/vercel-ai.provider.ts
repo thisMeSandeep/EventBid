@@ -1,5 +1,7 @@
 import { env } from "../../lib/env";
 import { analyseProposalsWithAI } from "./functions/analyse-proposals";
+import { analyseProposalWithAI } from "./functions/analyse-proposal";
+import { briefWinGuideWithAI } from "./functions/brief-win-guide";
 import { checkBriefQualityWithAI } from "./functions/check-brief-quality";
 import { embedTextWithAI } from "./functions/embed-text";
 import { improveBriefDescriptionWithAI } from "./functions/improve-brief-description";
@@ -7,6 +9,8 @@ import type {
   AIProvider,
   AnalysisResult,
   BriefQualityResult,
+  BriefWinGuideResult,
+  ProposalAnalysisResult,
 } from "./ai.provider.interface";
 import type {
   Brief,
@@ -25,6 +29,17 @@ export class VercelAIProvider implements AIProvider {
     proposals: Proposal[],
   ): Promise<AnalysisResult[]> {
     return analyseProposalsWithAI(this.generationModel, brief, proposals);
+  }
+
+  analyseProposal(
+    brief: Brief,
+    proposal: Proposal,
+  ): Promise<ProposalAnalysisResult> {
+    return analyseProposalWithAI(this.generationModel, brief, proposal);
+  }
+
+  briefWinGuide(brief: Brief): Promise<BriefWinGuideResult> {
+    return briefWinGuideWithAI(this.generationModel, brief);
   }
 
   improveBriefDescription(

@@ -11,6 +11,23 @@ export interface AnalysisResult {
   gaps: string[];
 }
 
+export interface ProposalAnalysisResult {
+  score: number;
+  subScores: {
+    budgetFit: number;
+    inclusionsMatch: number;
+    briefAlignment: number;
+  };
+  summary: string;
+  gaps: string[];
+}
+
+export interface BriefWinGuideResult {
+  summary: string;
+  keyRequirements: string[];
+  tips: string[];
+}
+
 export interface BriefDescriptionImprovement {
   description: string;
 }
@@ -24,6 +41,11 @@ export interface AIProvider {
     brief: Brief,
     proposals: Proposal[],
   ): Promise<AnalysisResult[]>;
+  analyseProposal(
+    brief: Brief,
+    proposal: Proposal,
+  ): Promise<ProposalAnalysisResult>;
+  briefWinGuide(brief: Brief): Promise<BriefWinGuideResult>;
   improveBriefDescription(
     description: string,
     requirements: string[],

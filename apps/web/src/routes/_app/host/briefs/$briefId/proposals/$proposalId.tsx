@@ -1,10 +1,17 @@
 import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
-import { briefQuery, proposalsQuery } from '#/server/briefs'
+import {
+  briefQuery,
+  proposalAnalysisQuery,
+  proposalsQuery,
+  regenerateProposalAnalysis,
+} from '#/server/briefs'
+import { qk } from '#/lib/query-keys'
 import { VenueProposalCard } from '#/components/proposal/VenueProposalCard'
 import { AcceptProposalDialog } from '#/components/proposal/AcceptProposalDialog'
+import { ProposalAnalysisCard } from '#/components/analysis/ProposalAnalysisCard'
 import { Button } from '#/components/ui/button'
 
 export const Route = createFileRoute(
@@ -17,6 +24,17 @@ function HostProposalDetailPage() {
   const { briefId, proposalId } = Route.useParams()
   const { data: brief } = useQuery(briefQuery(briefId))
   const { data: proposalsData } = useQuery(proposalsQuery(briefId))
+  const { data: analysis } = useQuery(
+    proposalAnalysisQuery(briefId, proposalId),
+  )
+  const queryClient = useQueryClient()
+  const regenerate = useMutation({
+    mutationFn: () => regenerateProposalAnalysis(briefId, proposalId),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: qk.briefs.proposalAnalysis(briefId, proposalId),
+      }),
+  })
   const [acceptOpen, setAcceptOpen] = useState(false)
 
   if (!brief) return null
@@ -86,8 +104,15 @@ function HostProposalDetailPage() {
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-8 space-y-6">
         <VenueProposalCard proposal={proposal} />
+        {analysis && (
+          <ProposalAnalysisCard
+            analysis={analysis}
+            onRegenerate={() => regenerate.mutate()}
+            isRegenerating={regenerate.isPending}
+          />
+        )}
       </div>
 
       <AcceptProposalDialog

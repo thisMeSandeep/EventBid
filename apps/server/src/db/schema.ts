@@ -230,6 +230,38 @@ export const aiAnalyses = pgTable("ai_analyses", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
+// Per-proposal AI analysis, generated once in the background after a proposal
+// is created. status: pending | complete | failed.
+export const proposalAnalyses = pgTable(
+  "proposal_analyses",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    proposalId: uuid("proposal_id").notNull().unique(),
+    briefId: uuid("brief_id").notNull(),
+    status: text("status").notNull().default("pending"),
+    score: integer("score"), // 0–100 overall match
+    subScores: jsonb("sub_scores"), // { budgetFit, inclusionsMatch, briefAlignment }
+    summary: text("summary"),
+    gaps: jsonb("gaps"), // string[]
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => [index("idx_proposal_analyses_brief_id").on(table.briefId)],
+);
+
+// Per-brief "how to win" AI analysis for venues, generated once in the
+// background after a brief is created. status: pending | complete | failed.
+export const briefAnalyses = pgTable("brief_analyses", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  briefId: uuid("brief_id").notNull().unique(),
+  status: text("status").notNull().default("pending"),
+  summary: text("summary"),
+  keyRequirements: jsonb("key_requirements"), // string[]
+  tips: jsonb("tips"), // string[]
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
 export const notifications = pgTable(
   "notifications",
   {

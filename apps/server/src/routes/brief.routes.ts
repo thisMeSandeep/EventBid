@@ -53,6 +53,12 @@ briefRoutes.post(
       briefId: brief.id,
     });
 
+    // Generate the venue-facing "how to win" guide once, in the background.
+    await adapters.queue.enqueue("brief-analysis", {
+      type: "brief-analysis",
+      briefId: brief.id,
+    });
+
     return c.json({ brief, warnings }, 201);
   },
 );
@@ -126,11 +132,15 @@ briefRoutes.patch("/:id", requireAuth, requireRole("host"), async (c) => {
     toBriefUpdateInput(parsed.data),
   );
 
-  // Re-match when fields that feed the brief embedding or hard filter change,
-  // so the brief's matches (and scores) reflect the edit.
+  // Re-match (and refresh the venue guide) when fields that feed the brief
+  // embedding or hard filter change, so they reflect the edit.
   if (haveMatchableBriefFieldsChanged(existing, parsed.data)) {
     await adapters.queue.enqueue("matching", {
       type: "match-brief",
+      briefId: brief.id,
+    });
+    await adapters.queue.enqueue("brief-analysis", {
+      type: "brief-analysis",
       briefId: brief.id,
     });
   }

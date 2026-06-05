@@ -1,8 +1,10 @@
 import type { JobDependencies, JobRegistry } from "./engine";
 import { aiAnalysisHandler } from "./handlers/ai-analysis.handler";
+import { briefAnalysisHandler } from "./handlers/brief-analysis.handler";
 import { deadlineHandler } from "./handlers/deadline.handler";
 import { emailHandler } from "./handlers/email.handler";
 import { matchingHandler } from "./handlers/matching.handler";
+import { proposalAnalysisHandler } from "./handlers/proposal-analysis.handler";
 import { venueEmbeddingHandler } from "./handlers/venue-embedding.handler";
 
 export const jobRegistry: JobRegistry = [
@@ -17,6 +19,18 @@ export const jobRegistry: JobRegistry = [
     concurrency: 2,
     handler: aiAnalysisHandler,
     retries: 2,
+  },
+  {
+    queueName: "proposal-analysis",
+    concurrency: 2,
+    handler: proposalAnalysisHandler,
+    retries: 3,
+  },
+  {
+    queueName: "brief-analysis",
+    concurrency: 2,
+    handler: briefAnalysisHandler,
+    retries: 3,
   },
   {
     queueName: "email",

@@ -9,6 +9,82 @@ import type { AppEnv } from "../types/hono-env";
 
 export const briefAnalysisRoutes = new Hono<AppEnv>();
 
+// GET /briefs/:id/proposals/:pid/analysis — per-proposal AI analysis (host only)
+briefAnalysisRoutes.get(
+  "/:id/proposals/:pid/analysis",
+  requireAuth,
+  requireRole("host"),
+  async (c) => {
+    const user = c.get("user");
+    const briefId = c.req.param("id");
+    const proposalId = c.req.param("pid");
+    await requireOwnedBrief(briefId, user.id);
+
+    const analysis =
+      await repositories.proposalAnalyses.findByProposalId(proposalId);
+
+    return c.json(analysis ?? { proposalId, briefId, status: "pending" });
+  },
+);
+
+// POST /briefs/:id/proposals/:pid/analysis/regenerate — re-run it (host, 5/min)
+briefAnalysisRoutes.post(
+  "/:id/proposals/:pid/analysis/regenerate",
+  requireAuth,
+  requireRole("host"),
+  rateLimit(5, "1 m"),
+  async (c) => {
+    const user = c.get("user");
+    const briefId = c.req.param("id");
+    const proposalId = c.req.param("pid");
+    await requireOwnedBrief(briefId, user.id);
+
+    await repositories.proposalAnalyses.upsertStatus(
+      proposalId,
+      briefId,
+      "pending",
+    );
+    await adapters.queue.enqueue("proposal-analysis", {
+      type: "proposal-analysis",
+      proposalId,
+    });
+
+    return c.json({ status: "queued" });
+  },
+);
+
+// GET /briefs/:id/venue-analysis — "how to win" guide for venues (venue rep)
+briefAnalysisRoutes.get(
+  "/:id/venue-analysis",
+  requireAuth,
+  requireRole("venue_rep"),
+  async (c) => {
+    const briefId = c.req.param("id");
+    const analysis = await repositories.briefAnalyses.findByBriefId(briefId);
+
+    return c.json(analysis ?? { briefId, status: "pending" });
+  },
+);
+
+// POST /briefs/:id/venue-analysis/regenerate — re-run it (venue rep, 5/min)
+briefAnalysisRoutes.post(
+  "/:id/venue-analysis/regenerate",
+  requireAuth,
+  requireRole("venue_rep"),
+  rateLimit(5, "1 m"),
+  async (c) => {
+    const briefId = c.req.param("id");
+
+    await repositories.briefAnalyses.upsertStatus(briefId, "pending");
+    await adapters.queue.enqueue("brief-analysis", {
+      type: "brief-analysis",
+      briefId,
+    });
+
+    return c.json({ status: "queued" });
+  },
+);
+
 // GET /briefs/:id/analysis — current AI analysis state for a brief (host only)
 briefAnalysisRoutes.get(
   "/:id/analysis",
