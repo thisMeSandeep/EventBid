@@ -118,6 +118,19 @@ export class ProposalRepository {
       .orderBy(desc(proposals.createdAt));
   }
 
+  /** All proposals a venue has submitted for a brief, newest version first
+   *  (current active proposal plus its superseded earlier versions). */
+  async findByVenueAndBrief(
+    venueId: string,
+    briefId: string,
+  ): Promise<Proposal[]> {
+    return this.db
+      .select()
+      .from(proposals)
+      .where(and(eq(proposals.venueId, venueId), eq(proposals.briefId, briefId)))
+      .orderBy(desc(proposals.version));
+  }
+
   async findLatestByVenueAndBrief(
     venueId: string,
     briefId: string,

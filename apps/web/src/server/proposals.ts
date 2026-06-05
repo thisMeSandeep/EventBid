@@ -41,6 +41,23 @@ export const myProposalsQuery = (params: MyProposalsParams = {}) =>
     },
   })
 
+// The venue rep's own proposals for a single brief (all versions, newest first).
+export const myProposalsForBriefQuery = (briefId: string) =>
+  queryOptions({
+    queryKey: qk.venues.proposalsForBrief(briefId),
+    queryFn: async (): Promise<Proposal[]> => {
+      try {
+        const res = await apiClient.get<{ data: Proposal[] }>(
+          `/api/venues/me/briefs/${briefId}/proposals`,
+        )
+        return res.data
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 404) return []
+        throw err
+      }
+    },
+  })
+
 // Mutation helpers — called client-side from useMutation (Step 28).
 export const submitProposal = (briefId: string, body: CreateProposalDto) =>
   apiClient.post<Proposal>(`/api/briefs/${briefId}/proposals`, body)

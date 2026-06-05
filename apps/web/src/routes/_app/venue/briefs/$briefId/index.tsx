@@ -2,10 +2,14 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import { briefQuery } from '#/server/briefs'
+import { myProposalsForBriefQuery } from '#/server/proposals'
 import { BriefSummaryBlock } from '#/components/brief/BriefSummaryBlock'
+import { VenueProposalCard } from '#/components/proposal/VenueProposalCard'
 import { Button } from '#/components/ui/button'
 
 export const Route = createFileRoute('/_app/venue/briefs/$briefId/')({
+  loader: ({ context: { queryClient }, params: { briefId } }) =>
+    queryClient.ensureQueryData(myProposalsForBriefQuery(briefId)),
   component: VenueBriefReadPage,
 })
 
@@ -14,33 +18,41 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 function VenueBriefReadPage() {
   const { briefId } = Route.useParams()
   const { data: brief } = useQuery(briefQuery(briefId))
+  const { data: proposals = [] } = useQuery(myProposalsForBriefQuery(briefId))
 
   if (!brief) return null
 
   const isOpen = brief.status === 'open'
+  const hasActive = proposals.some((p) => p.status === 'active')
 
   return (
     <>
       <Link
-        to="/venue/feed"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        to="/venue/proposals"
+        className="inline-flex items-center gap-1 text-[13px] text-muted-foreground transition-colors duration-200 ease-out hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
-        Brief Feed
+        My Proposals
       </Link>
 
-      <div className="mt-3 flex items-start justify-between gap-4">
-        <h1 className="text-xl font-semibold text-foreground">{cap(brief.eventType)}</h1>
+      <div className="mt-6 flex items-start justify-between gap-4">
+        <h1 className="font-serif text-[28px] font-normal tracking-[-0.01em] text-foreground">
+          {cap(brief.eventType)}
+        </h1>
         {isOpen && (
-          <Button asChild size="sm">
+          <Button
+            asChild
+            className="rounded-full bg-foreground font-normal text-background transition-colors duration-200 ease-out hover:bg-foreground/90"
+          >
             <Link to="/venue/briefs/$briefId/propose" params={{ briefId }}>
-              Submit a Proposal
+              {hasActive ? 'Revise proposal' : 'Submit a proposal'}
             </Link>
           </Button>
         )}
       </div>
 
-      <div className="mt-6">
+      {/* Brief details */}
+      <div className="mt-8">
         <BriefSummaryBlock brief={brief} />
       </div>
 
@@ -49,6 +61,24 @@ function VenueBriefReadPage() {
           This brief is no longer accepting proposals.
         </p>
       )}
+
+      {/* The venue rep's own proposals for this brief */}
+      <section className="mt-10">
+        <h2 className="text-base font-medium text-foreground">
+          {proposals.length > 1 ? 'Your proposals' : 'Your proposal'}
+        </h2>
+        {proposals.length === 0 ? (
+          <p className="mt-3 text-sm text-muted-foreground">
+            You haven't submitted a proposal for this brief yet.
+          </p>
+        ) : (
+          <div className="mt-4 space-y-4">
+            {proposals.map((proposal) => (
+              <VenueProposalCard key={proposal.id} proposal={proposal} />
+            ))}
+          </div>
+        )}
+      </section>
     </>
   )
 }

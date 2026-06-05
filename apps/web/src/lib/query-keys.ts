@@ -13,6 +13,8 @@ export const qk = {
       ['venues', 'feed', cursor ?? null, eventType ?? null] as const,
     proposals: (cursor?: string, status?: string) =>
       ['venues', 'proposals', cursor ?? null, status ?? null] as const,
+    proposalsForBrief: (briefId: string) =>
+      ['venues', 'proposals', 'brief', briefId] as const,
     byId: (id: string) => ['venues', id] as const,
   },
   notifications: {

@@ -30,16 +30,16 @@ function ProposePage() {
       <Link
         to="/venue/briefs/$briefId"
         params={{ briefId }}
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        className="inline-flex items-center gap-1 text-[13px] text-muted-foreground transition-colors duration-200 ease-out hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to brief
       </Link>
 
-      <h1 className="mt-3 text-xl font-semibold text-foreground">
-        {existing ? 'Revise your Proposal' : 'Submit a Proposal'}
+      <h1 className="mt-6 font-serif text-[28px] font-normal tracking-[-0.01em] text-foreground">
+        {existing ? 'Revise your proposal' : 'Submit a proposal'}
       </h1>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="mt-1 text-[13px] text-muted-foreground">
         {cap(brief.eventType)} · {formatDate(brief.eventDateFrom)} · {brief.headcount}{' '}
         guests
       </p>

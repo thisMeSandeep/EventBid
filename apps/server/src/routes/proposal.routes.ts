@@ -186,6 +186,25 @@ venueProposalRoutes.get(
   },
 );
 
+// GET /venues/me/briefs/:briefId/proposals — the venue rep's own proposals
+// (all versions) for a single brief.
+venueProposalRoutes.get(
+  "/me/briefs/:briefId/proposals",
+  requireAuth,
+  requireRole("venue_rep"),
+  async (c) => {
+    const user = c.get("user");
+    const venue = await requireVenueForUser(user.id);
+    const briefId = c.req.param("briefId");
+    const proposals = await repositories.proposals.findByVenueAndBrief(
+      venue.id,
+      briefId,
+    );
+
+    return c.json({ data: proposals });
+  },
+);
+
 async function requireOwnedBrief(
   briefId: string,
   hostId: string,

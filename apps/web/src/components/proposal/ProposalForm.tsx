@@ -1,6 +1,13 @@
+import type { ComponentType, ReactNode } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
+import {
+  CalendarCheck2,
+  IndianRupee,
+  NotebookPen,
+  PackageCheck,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import {
   amenities as AMENITIES,
@@ -68,11 +75,32 @@ function FieldError({ errors }: { errors: unknown[] }) {
   )
 }
 
-function SectionHeading({ children }: { children: React.ReactNode }) {
+function SectionCard({
+  icon: Icon,
+  title,
+  description,
+  children,
+}: {
+  icon: ComponentType<{ className?: string }>
+  title: string
+  description?: string
+  children: ReactNode
+}) {
   return (
-    <h2 className="mb-4 border-b border-border pb-2 text-sm font-medium text-foreground">
-      {children}
-    </h2>
+    <section className="rounded-xl border border-black/[0.06] bg-card p-6 shadow-sm sm:p-8">
+      <div className="flex items-start gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted/60 text-muted-foreground">
+          <Icon className="h-4 w-4" />
+        </span>
+        <div>
+          <h2 className="text-base font-medium text-foreground">{title}</h2>
+          {description && (
+            <p className="mt-0.5 text-[13px] text-muted-foreground">{description}</p>
+          )}
+        </div>
+      </div>
+      <div className="mt-6">{children}</div>
+    </section>
   )
 }
 
@@ -109,15 +137,17 @@ export function ProposalForm({ briefId, existing }: ProposalFormProps) {
 
   return (
     <form
-      className="mt-8 space-y-10"
+      className="mt-8 space-y-6"
       onSubmit={(e) => {
         e.preventDefault()
         form.handleSubmit()
       }}
     >
-      {/* Pricing */}
-      <section>
-        <SectionHeading>Pricing</SectionHeading>
+      <SectionCard
+        icon={IndianRupee}
+        title="Pricing"
+        description="What you'd charge for this event."
+      >
         <div className="grid grid-cols-2 gap-4">
           <form.Field
             name="totalPrice"
@@ -128,7 +158,9 @@ export function ProposalForm({ briefId, existing }: ProposalFormProps) {
           >
             {(field) => (
               <div>
-                <Label htmlFor={field.name}>Total price (₹)</Label>
+                <Label htmlFor={field.name} className="mb-2">
+                  Total price (₹)
+                </Label>
                 <Input
                   id={field.name}
                   type="number"
@@ -143,7 +175,9 @@ export function ProposalForm({ briefId, existing }: ProposalFormProps) {
           <form.Field name="priceType">
             {(field) => (
               <div>
-                <Label htmlFor={field.name}>Price type</Label>
+                <Label htmlFor={field.name} className="mb-2">
+                  Price type
+                </Label>
                 <NativeSelect
                   id={field.name}
                   className="w-full"
@@ -161,23 +195,23 @@ export function ProposalForm({ briefId, existing }: ProposalFormProps) {
             )}
           </form.Field>
         </div>
-      </section>
+      </SectionCard>
 
-      {/* What's included */}
-      <section>
-        <SectionHeading>What's included</SectionHeading>
-        <div className="space-y-4">
+      <SectionCard
+        icon={PackageCheck}
+        title="What's included"
+        description="Amenities and extras that come with your offer."
+      >
+        <div className="space-y-6">
           <form.Field name="amenities">
             {(field) => (
               <div>
-                <Label>Amenities</Label>
-                <div className="mt-1.5">
-                  <TagPicker
-                    options={AMENITIES}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                  />
-                </div>
+                <Label className="mb-2">Amenities</Label>
+                <TagPicker
+                  options={AMENITIES}
+                  value={field.state.value}
+                  onChange={field.handleChange}
+                />
               </div>
             )}
           </form.Field>
@@ -185,7 +219,9 @@ export function ProposalForm({ briefId, existing }: ProposalFormProps) {
           <form.Field name="cateringType">
             {(field) => (
               <div className="max-w-[240px]">
-                <Label htmlFor={field.name}>Catering</Label>
+                <Label htmlFor={field.name} className="mb-2">
+                  Catering
+                </Label>
                 <NativeSelect
                   id={field.name}
                   className="w-full"
@@ -206,7 +242,9 @@ export function ProposalForm({ briefId, existing }: ProposalFormProps) {
           <form.Field name="inclusions">
             {(field) => (
               <div>
-                <Label htmlFor={field.name}>Other inclusions</Label>
+                <Label htmlFor={field.name} className="mb-2">
+                  Other inclusions
+                </Label>
                 <Textarea
                   id={field.name}
                   rows={3}
@@ -218,11 +256,13 @@ export function ProposalForm({ briefId, existing }: ProposalFormProps) {
             )}
           </form.Field>
         </div>
-      </section>
+      </SectionCard>
 
-      {/* Availability & Capacity */}
-      <section>
-        <SectionHeading>Availability & Capacity</SectionHeading>
+      <SectionCard
+        icon={CalendarCheck2}
+        title="Availability & Capacity"
+        description="Confirm you can host this event."
+      >
         <div className="space-y-3">
           <form.Field name="availabilityConfirmed">
             {(field) => (
@@ -247,11 +287,13 @@ export function ProposalForm({ briefId, existing }: ProposalFormProps) {
             )}
           </form.Field>
         </div>
-      </section>
+      </SectionCard>
 
-      {/* Additional notes */}
-      <section>
-        <SectionHeading>Additional notes</SectionHeading>
+      <SectionCard
+        icon={NotebookPen}
+        title="Additional notes"
+        description="Anything else the host should know."
+      >
         <form.Field name="notes">
           {(field) => (
             <Textarea
@@ -262,9 +304,13 @@ export function ProposalForm({ briefId, existing }: ProposalFormProps) {
             />
           )}
         </form.Field>
-      </section>
+      </SectionCard>
 
-      <Button type="submit" className="mt-8 w-full" disabled={mutation.isPending}>
+      <Button
+        type="submit"
+        disabled={mutation.isPending}
+        className="w-full rounded-full bg-foreground font-normal text-background transition-colors duration-200 ease-out hover:bg-foreground/90"
+      >
         {mutation.isPending
           ? 'Submitting…'
           : isRevise
