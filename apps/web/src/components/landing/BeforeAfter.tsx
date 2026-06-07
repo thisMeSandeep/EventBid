@@ -1,5 +1,13 @@
-import { MessagesSquare, FileX, PhoneCall, Check, Sparkles, FileText } from 'lucide-react'
-import { Card } from '#/components/ui/card'
+import {
+  MessagesSquare,
+  FileX,
+  PhoneCall,
+  Check,
+  Sparkles,
+  FileText,
+  ArrowRight,
+  X,
+} from 'lucide-react'
 
 const before = [
   { icon: MessagesSquare, text: 'Endless WhatsApp threads and phone tag with each venue' },
@@ -26,34 +34,56 @@ export function BeforeAfter() {
           </h2>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2">
+        <div className="relative mt-16 grid items-stretch gap-6 md:grid-cols-2 md:gap-0">
           {/* Before */}
-          <Card className="gap-0 border-transparent bg-muted/50 p-8 shadow-none md:p-10">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-              Without EventBid
-            </p>
-            <ul className="mt-7 space-y-6">
+          <div className="relative rounded-2xl border border-border/60 bg-muted/40 p-8 md:rounded-r-none md:border-r-0 md:p-10">
+            <div className="mb-7 flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted-foreground/10 text-muted-foreground">
+                <X className="h-4 w-4" strokeWidth={2} />
+              </span>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Without EventBid
+              </p>
+            </div>
+            <ul className="space-y-5">
               {before.map(({ icon: Icon, text }) => (
                 <li key={text} className="flex items-start gap-3.5">
-                  <Icon className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" strokeWidth={1.5} />
-                  <span className="text-[15px] leading-[1.7] text-muted-foreground">{text}</span>
+                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-background/70 text-muted-foreground">
+                    <Icon className="h-[18px] w-[18px]" strokeWidth={1.5} />
+                  </span>
+                  <span className="text-[15px] leading-[1.65] text-muted-foreground">{text}</span>
                 </li>
               ))}
             </ul>
-          </Card>
+          </div>
+
+          {/* Connector */}
+          <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 md:block">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background text-primary shadow-sm">
+              <ArrowRight className="h-5 w-5" strokeWidth={2} />
+            </span>
+          </div>
 
           {/* After */}
-          <Card className="gap-0 border-transparent border-l-[3px] border-l-primary bg-card p-8 shadow-none md:p-10">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-primary">With EventBid</p>
-            <ul className="mt-7 space-y-6">
+          <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-card p-8 shadow-[0_1px_30px_-12px] shadow-primary/25 md:rounded-l-none md:p-10">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0" />
+            <div className="mb-7 flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Sparkles className="h-4 w-4" strokeWidth={2} />
+              </span>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-primary">With EventBid</p>
+            </div>
+            <ul className="space-y-5">
               {after.map(({ icon: Icon, text }) => (
                 <li key={text} className="flex items-start gap-3.5">
-                  <Icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" strokeWidth={1.5} />
-                  <span className="text-[15px] leading-[1.7] text-foreground">{text}</span>
+                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                    <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                  </span>
+                  <span className="text-[15px] leading-[1.65] text-foreground">{text}</span>
                 </li>
               ))}
             </ul>
-          </Card>
+          </div>
         </div>
       </div>
     </section>
