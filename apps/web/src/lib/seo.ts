@@ -1,6 +1,6 @@
 // Central SEO config. Update SITE_URL to your production domain — it's used for
 // canonical URLs, Open Graph, and the sitemap (absolute URLs are required there).
-export const SITE_URL = 'https://event-bid.sandeepnayal.com'
+export const SITE_URL = 'https://eventbid.sandeepnayal.com'
 export const SITE_NAME = 'EventBid'
 
 export const SITE_TITLE =
