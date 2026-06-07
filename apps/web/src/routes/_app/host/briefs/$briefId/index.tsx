@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { GitCompare, Loader2, Sparkles } from 'lucide-react'
 import { analysisQuery, briefQuery, proposalsQuery } from '#/server/briefs'
+import { BriefDetailHeader } from '#/components/brief/BriefDetailHeader'
 import { BriefSummaryBlock } from '#/components/brief/BriefSummaryBlock'
 import { ProposalGrid } from '#/components/proposal/ProposalGrid'
 import { AnalysisPanel } from '#/components/analysis/AnalysisPanel'
@@ -40,8 +41,10 @@ function BriefDetailIndex() {
     })
 
   return (
-    <div className="mt-6 space-y-8">
-      <BriefSummaryBlock brief={brief} />
+    <div>
+      <BriefDetailHeader brief={brief} proposalCount={proposals.length} />
+      <div className="mt-6 space-y-8">
+        <BriefSummaryBlock brief={brief} />
 
       <section>
         <div className="flex items-center justify-between">
@@ -115,6 +118,7 @@ function BriefDetailIndex() {
           </Button>
         </div>
       )}
+      </div>
     </div>
   )
 }

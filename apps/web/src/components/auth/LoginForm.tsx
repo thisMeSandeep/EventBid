@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
@@ -5,7 +6,6 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import { qk } from '#/lib/query-keys'
-import { env } from '#/lib/env'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
@@ -20,11 +20,27 @@ const passwordSchema = z.string().min(8, 'Password must be at least 8 characters
 
 interface LoginFormProps {
   next?: string
+  error?: string
 }
 
-export function LoginForm({ next }: LoginFormProps) {
+// Maps Better Auth OAuth error codes (?error=...) to user-facing messages.
+function oauthErrorMessage(code: string): string {
+  switch (code) {
+    case 'account_not_linked':
+      return 'An account with this email already exists. Sign in with your email and password instead.'
+    default:
+      return 'Could not sign in with Google. Please try again.'
+  }
+}
+
+export function LoginForm({ next, error }: LoginFormProps) {
   const queryClient = useQueryClient()
   const router = useRouter()
+
+  // Surface OAuth failures redirected back here by Better Auth (errorCallbackURL).
+  useEffect(() => {
+    if (error) toast.error(oauthErrorMessage(error))
+  }, [error])
 
   const loginMutation = useMutation({
     mutationFn: async (values: { email: string; password: string }) => {
@@ -159,13 +175,20 @@ export function LoginForm({ next }: LoginFormProps) {
         <span className="text-xs text-muted-foreground">or</span>
         <Separator className="flex-1 bg-border/60" />
       </div>
-      <a
-        href={`${env.VITE_API_URL}/api/auth/google`}
+      <button
+        type="button"
+        onClick={() =>
+          authClient.signIn.social({
+            provider: 'google',
+            callbackURL: next ?? '/',
+            errorCallbackURL: '/login',
+          })
+        }
         className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-black/[0.06] bg-card px-4 py-2.5 text-sm font-normal text-foreground transition-colors duration-200 ease-out hover:bg-muted/60"
       >
         <img src={googleIcon} alt="" className="h-4 w-4" />
         Continue with Google
-      </a>
+      </button>
 
       {/* Switch to register */}
       <p className="mt-8 text-center text-sm text-muted-foreground">

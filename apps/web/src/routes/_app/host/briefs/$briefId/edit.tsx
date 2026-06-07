@@ -1,5 +1,6 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
+import { ArrowLeft } from 'lucide-react'
 import { briefQuery } from '#/server/briefs'
 import { BriefEditForm } from '#/components/brief/BriefEditForm'
 
@@ -20,5 +21,17 @@ function EditBriefPage() {
 
   if (!brief) return null
 
-  return <BriefEditForm brief={brief} />
+  return (
+    <div className="mt-2">
+      <Link
+        to="/host/briefs/$briefId"
+        params={{ briefId }}
+        className="inline-flex items-center gap-1 text-[13px] text-muted-foreground transition-colors duration-200 ease-out hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to brief
+      </Link>
+      <BriefEditForm brief={brief} />
+    </div>
+  )
 }

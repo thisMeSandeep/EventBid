@@ -21,12 +21,9 @@ const socials = [
 
 function FooterLink({ children }: { children: string }) {
   return (
-    <a
-      href="#"
-      className="text-[13px] text-muted-foreground underline-offset-4 transition-colors duration-200 ease-out hover:text-foreground hover:underline"
-    >
+    <span className="text-[13px] text-muted-foreground transition-colors duration-200 ease-out hover:text-foreground">
       {children}
-    </a>
+    </span>
   )
 }
 
@@ -46,14 +43,13 @@ export function Footer() {
             </p>
             <div className="mt-5 flex items-center gap-4">
               {socials.map(({ icon: Icon, label }) => (
-                <a
+                <span
                   key={label}
-                  href="#"
                   aria-label={label}
                   className="text-muted-foreground transition-colors duration-200 ease-out hover:text-foreground"
                 >
                   <Icon className="h-[18px] w-[18px]" strokeWidth={1.5} />
-                </a>
+                </span>
               ))}
             </div>
           </div>

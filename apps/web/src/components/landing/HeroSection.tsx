@@ -47,14 +47,6 @@ export function HeroSection() {
                 <ArrowRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none" />
               </a>
             </Button>
-            <Button
-              asChild
-              variant="ghost"
-              size="lg"
-              className="h-12 rounded-full px-5 text-[15px] font-normal text-foreground hover:bg-muted"
-            >
-              <a href="#">Browse venues</a>
-            </Button>
           </div>
 
           <div className="mt-10 flex flex-wrap gap-x-7 gap-y-3">

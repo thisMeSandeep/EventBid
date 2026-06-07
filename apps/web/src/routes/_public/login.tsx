@@ -6,6 +6,8 @@ import { LoginForm } from '#/components/auth/LoginForm'
 
 const searchSchema = z.object({
   next: z.string().optional(),
+  // Set by Better Auth's OAuth flow on failure, e.g. ?error=account_not_linked
+  error: z.string().optional(),
 })
 
 export const Route = createFileRoute('/_public/login')({
@@ -18,6 +20,6 @@ export const Route = createFileRoute('/_public/login')({
 })
 
 function LoginPage() {
-  const { next } = Route.useSearch()
-  return <LoginForm next={next} />
+  const { next, error } = Route.useSearch()
+  return <LoginForm next={next} error={error} />
 }
