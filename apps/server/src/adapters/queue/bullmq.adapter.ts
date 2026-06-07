@@ -1,5 +1,6 @@
 import { Queue } from "bullmq";
-import { redis } from "../../lib/redis";
+import { redis, withRedisTimeout } from "../../lib/redis";
+import { logger } from "../../lib/logger";
 import type { ConnectionOptions } from "bullmq";
 import type {
   EnqueueOptions,
@@ -39,14 +40,27 @@ export class BullMQAdapter implements QueueAdapter {
   ): Promise<void> {
     const queue = this.getQueue(queueName);
 
-    await queue.add(payload.type, payload, {
-      attempts: options?.attempts ?? DEFAULT_ATTEMPTS,
-      delay: options?.delay,
-      backoff: {
-        type: "exponential",
-        delay: DEFAULT_BACKOFF_DELAY_MS,
-      },
-    });
+    try {
+      await withRedisTimeout(
+        () =>
+          queue.add(payload.type, payload, {
+            attempts: options?.attempts ?? DEFAULT_ATTEMPTS,
+            delay: options?.delay,
+            backoff: {
+              type: "exponential",
+              delay: DEFAULT_BACKOFF_DELAY_MS,
+            },
+          }),
+        3_000,
+      );
+    } catch (err) {
+      // Redis down / over quota: drop the job rather than failing the request.
+      // The caller's primary action (e.g. creating a brief) still succeeds.
+      logger.error(
+        { err, queueName, jobType: payload.type },
+        "Failed to enqueue job (Redis unavailable) — job dropped",
+      );
+    }
   }
 }
 

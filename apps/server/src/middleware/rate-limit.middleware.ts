@@ -1,5 +1,6 @@
 import { createMiddleware } from "hono/factory";
-import { redis } from "../lib/redis";
+import { redis, withRedisTimeout } from "../lib/redis";
+import { logger } from "../lib/logger";
 import type { AppEnv } from "../types/hono-env";
 
 type RateLimitWindow = `${number} ${"s" | "m" | "h"}`;
@@ -10,10 +11,19 @@ export function rateLimit(requests: number, window: RateLimitWindow) {
   return createMiddleware<AppEnv>(async (c, next) => {
     const user = c.get("user");
     const key = `rl:${user.id}:${c.req.path}`;
-    const count = await redis.incr(key);
 
-    if (count === 1) {
-      await redis.expire(key, windowSeconds);
+    let count: number | null = null;
+    try {
+      count = await withRedisTimeout(() => redis.incr(key));
+
+      if (count === 1) {
+        await withRedisTimeout(() => redis.expire(key, windowSeconds));
+      }
+    } catch (err) {
+      // Redis down / over quota: fail open so the request still goes through.
+      logger.warn({ err, key }, "Rate limit check skipped (Redis unavailable)");
+      await next();
+      return;
     }
 
     if (count > requests) {

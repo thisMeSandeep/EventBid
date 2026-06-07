@@ -24,6 +24,33 @@ if (
 
 export type RedisConnection = typeof redis;
 
+/**
+ * Run a Redis operation with a hard timeout so a down/over-quota Redis
+ * (which can hang while ioredis buffers commands) never blocks the HTTP path.
+ * Rejects if the op throws or exceeds `ms`; callers decide how to degrade.
+ */
+export async function withRedisTimeout<T>(
+  op: () => Promise<T>,
+  ms = 1_000,
+): Promise<T> {
+  let timer: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      op(),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(
+          () => reject(new Error(`Redis op timed out after ${ms}ms`)),
+          ms,
+        );
+      }),
+    ]);
+  } finally {
+    if (timer) {
+      clearTimeout(timer);
+    }
+  }
+}
+
 function safeHostname(url: string): string | undefined {
   try {
     return new URL(url).hostname;

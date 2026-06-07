@@ -62,13 +62,12 @@ async function start() {
     jobEngine.start();
     jobsStarted = true;
     logger.info("Job workers started");
-  } else if (env.NODE_ENV === "development") {
-    logger.warn(
-      "Redis unavailable — job workers not started.",
-    );
   } else {
-    logger.error("Redis connection failed in production");
-    process.exit(1);
+    // Keep serving HTTP even without Redis. Background jobs and rate limiting
+    // degrade gracefully; the rest of the API stays available.
+    logger.error(
+      "Redis unavailable — job workers not started; running in degraded mode",
+    );
   }
 
   const server = serve(
