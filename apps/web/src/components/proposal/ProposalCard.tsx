@@ -41,9 +41,9 @@ export function ProposalCard({
   return (
     <div
       className={[
-        'rounded-lg border p-5 transition-colors',
-        isLocked ? 'border-emerald-300 bg-emerald-50/40' : 'border-border',
-        selected ? 'border-foreground/30 bg-muted/30' : '',
+        'rounded-xl border bg-card p-5 transition-colors',
+        isLocked ? 'border-primary bg-accent/20' : 'border-border',
+        selected ? 'border-primary/60 bg-accent/10' : '',
         isClosed ? 'opacity-60' : '',
       ].join(' ')}
     >
@@ -66,25 +66,27 @@ export function ProposalCard({
             {proposal.venueName}
             <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-foreground" />
           </Link>
-          <p className="text-xs text-muted-foreground">{proposal.venueCity}</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+            {proposal.venueCity}
+          </p>
           </div>
         </div>
         {isLocked && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-primary-foreground">
             <Check className="h-3 w-3" />
             Accepted
           </span>
         )}
         {isClosed && (
-          <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+          <span className="rounded-full bg-muted px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
             Closed
           </span>
         )}
       </div>
 
-      <p className="mt-3 text-xl font-semibold text-foreground">
+      <p className="mt-3 text-[20px] font-medium tabular-nums text-foreground">
         {formatRupees(proposal.totalPrice)}
-        <span className="ml-1 text-xs font-normal text-muted-foreground">
+        <span className="ml-1.5 font-mono text-[10px] font-normal uppercase tracking-[0.12em] text-muted-foreground">
           {priceTypeLabel[proposal.priceType] ?? proposal.priceType}
         </span>
       </p>
@@ -96,7 +98,7 @@ export function ProposalCard({
               key={inc}
               className="flex items-center gap-2 text-sm text-muted-foreground"
             >
-              <Check className="h-4 w-4 shrink-0 text-primary" />
+              <Check className="h-4 w-4 shrink-0 text-foreground" strokeWidth={1.5} />
               {inc}
             </li>
           ))}
@@ -117,7 +119,7 @@ export function ProposalCard({
           asChild
           variant="outline"
           size="sm"
-          className="w-full rounded-full border-black/[0.06] font-normal transition-colors duration-200 ease-out hover:bg-muted/60"
+          className="w-full rounded-full border-border font-normal transition-colors duration-200 ease-out hover:bg-muted/60"
         >
           <Link
             to="/host/briefs/$briefId/proposals/$proposalId"

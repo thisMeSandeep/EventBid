@@ -36,9 +36,9 @@ export function BriefDetailHeader({ brief, proposalCount }: BriefDetailHeaderPro
         Back to briefs
       </Link>
 
-      <div className="mt-4 flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-semibold text-foreground">
+      <div className="mt-5 flex items-start justify-between gap-4">
+        <div className="flex items-baseline gap-3">
+          <h1 className="font-serif text-[32px] font-normal leading-[1.1] tracking-[-0.01em] text-foreground">
             {cap(brief.eventType)} in {brief.city}
           </h1>
           {brief.status === 'open' && (
@@ -53,8 +53,13 @@ export function BriefDetailHeader({ brief, proposalCount }: BriefDetailHeaderPro
         </div>
         <div className="flex items-center gap-2">
           {brief.status === 'open' && (
-            <Button variant="outline" size="sm" onClick={() => setCloseOpen(true)}>
-              Close Brief
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full border-border font-normal transition-colors duration-200 ease-out hover:bg-muted/60"
+              onClick={() => setCloseOpen(true)}
+            >
+              Close brief
             </Button>
           )}
           {canDelete && (
@@ -93,13 +98,12 @@ export function BriefDetailHeader({ brief, proposalCount }: BriefDetailHeaderPro
         onOpenChange={setDeleteOpen}
       />
 
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
         <BriefStatusBadge status={brief.status} />
-        <span>·</span>
         <span>
           {proposalCount} proposal{proposalCount === 1 ? '' : 's'}
         </span>
-        <span>·</span>
+        <span aria-hidden>·</span>
         <span>Deadline {formatDate(brief.deadline)}</span>
       </div>
     </div>

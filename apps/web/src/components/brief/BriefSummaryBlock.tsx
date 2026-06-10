@@ -1,71 +1,48 @@
-import type { ComponentType } from 'react'
-import {
-  CalendarClock,
-  CalendarDays,
-  IndianRupee,
-  MapPin,
-  PartyPopper,
-  Users,
-} from 'lucide-react'
 import type { Brief } from '@eventbid/shared'
 import { formatBudgetRange, formatDate } from '#/lib/format'
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
-function Field({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: ComponentType<{ className?: string }>
-  label: string
-  value: string
-}) {
+function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start gap-3">
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/60 text-muted-foreground">
-        <Icon className="h-4 w-4" />
-      </span>
-      <div className="min-w-0">
-        <dt className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-          {label}
-        </dt>
-        <dd className="mt-0.5 truncate text-sm text-foreground">{value}</dd>
-      </div>
+    <div className="min-w-0">
+      <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="mt-1 truncate text-[15px] text-foreground">{value}</dd>
     </div>
   )
 }
 
 export function BriefSummaryBlock({ brief }: { brief: Brief }) {
   return (
-    <div className="rounded-xl border border-black/[0.06] bg-card p-6 shadow-sm sm:p-8">
-      <dl className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-        <Field icon={PartyPopper} label="Event type" value={cap(brief.eventType)} />
+    <div className="rounded-xl border border-border bg-card shadow-sm">
+      <p className="border-b border-border px-6 py-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+        Brief summary
+      </p>
+
+      <dl className="grid grid-cols-1 gap-x-6 gap-y-6 p-6 sm:grid-cols-2 sm:p-8 lg:grid-cols-3">
+        <Field label="Event type" value={cap(brief.eventType)} />
         <Field
-          icon={CalendarDays}
           label="Dates"
           value={`${formatDate(brief.eventDateFrom)} – ${formatDate(brief.eventDateTo)}`}
         />
-        <Field icon={Users} label="Headcount" value={`${brief.headcount} guests`} />
-        <Field icon={MapPin} label="Location" value={`${brief.city}, ${brief.state}`} />
-        <Field
-          icon={IndianRupee}
-          label="Budget"
-          value={formatBudgetRange(brief.budgetMin, brief.budgetMax)}
-        />
-        <Field icon={CalendarClock} label="Deadline" value={formatDate(brief.deadline)} />
+        <Field label="Headcount" value={`${brief.headcount} guests`} />
+        <Field label="Location" value={`${brief.city}, ${brief.state}`} />
+        <Field label="Budget" value={formatBudgetRange(brief.budgetMin, brief.budgetMax)} />
+        <Field label="Deadline" value={formatDate(brief.deadline)} />
       </dl>
 
       {brief.requirements && brief.requirements.length > 0 && (
-        <div className="mt-8 border-t border-black/[0.06] pt-6">
-          <dt className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        <div className="border-t border-border px-6 py-5 sm:px-8">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Requirements
-          </dt>
+          </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {brief.requirements.map((r: string) => (
               <span
                 key={r}
-                className="rounded-full border border-black/[0.06] bg-muted/60 px-3 py-1 text-[13px] text-foreground"
+                className="rounded-full border border-border bg-muted/60 px-3 py-1 text-[13px] text-foreground"
               >
                 {cap(r)}
               </span>
@@ -75,10 +52,10 @@ export function BriefSummaryBlock({ brief }: { brief: Brief }) {
       )}
 
       {brief.description && (
-        <div className="mt-8 border-t border-black/[0.06] pt-6">
-          <dt className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        <div className="border-t border-border px-6 py-5 sm:px-8">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Description
-          </dt>
+          </p>
           <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-foreground">
             {brief.description}
           </p>

@@ -43,7 +43,7 @@ export function NavBar({ user }: NavBarProps) {
   const homeTo = user.role === 'host' ? '/host/briefs' : '/venue/feed'
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-black/[0.06] bg-background/80 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-full max-w-5xl items-center justify-between px-6">
         <div className="flex items-center gap-8">
           <Link to={homeTo} className="flex items-center gap-2">

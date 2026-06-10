@@ -73,10 +73,10 @@ function HostBriefsPage() {
                 })
               }
               className={[
-                'rounded-full px-3.5 py-1.5 text-[13px] transition-colors duration-200 ease-out',
+                'rounded-full px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors duration-200 ease-out',
                 active
                   ? 'bg-foreground text-background'
-                  : 'border border-black/[0.06] bg-card text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+                  : 'border border-border bg-card text-muted-foreground hover:bg-muted/60 hover:text-foreground',
               ].join(' ')}
             >
               {f.label}

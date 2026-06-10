@@ -9,6 +9,8 @@ import { Input } from '#/components/ui/input'
 
 const label = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
+const labelClass = 'font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground'
+
 export function RequirementsStep({
   form,
   briefId,
@@ -31,7 +33,7 @@ export function RequirementsStep({
             )
           return (
             <div className="space-y-2">
-              <Label>Requirements</Label>
+              <Label className={labelClass}>Requirements</Label>
               <div className="flex flex-wrap gap-2">
                 {amenities.map((a) => {
                   const on = selected.includes(a)
@@ -44,7 +46,7 @@ export function RequirementsStep({
                         'rounded-full px-3.5 py-1.5 text-[13px] transition-colors duration-200 ease-out',
                         on
                           ? 'bg-foreground text-background'
-                          : 'border border-black/[0.06] bg-card text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+                          : 'border border-border bg-card text-muted-foreground hover:bg-muted/60 hover:text-foreground',
                       ].join(' ')}
                     >
                       {label(a)}
@@ -61,12 +63,14 @@ export function RequirementsStep({
         {(field) => (
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <Label htmlFor={field.name}>Description</Label>
+              <Label htmlFor={field.name} className={labelClass}>
+                Description
+              </Label>
               {briefId && (
                 <button
                   type="button"
                   onClick={() => setImproveOpen((v) => !v)}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Sparkles className="h-3.5 w-3.5" />
                   Improve with AI
@@ -100,7 +104,9 @@ export function RequirementsStep({
       <form.Field name="deadline">
         {(field) => (
           <div className="space-y-1">
-            <Label htmlFor={field.name}>Proposal deadline</Label>
+            <Label htmlFor={field.name} className={labelClass}>
+              Proposal deadline
+            </Label>
             <Input
               id={field.name}
               type="date"

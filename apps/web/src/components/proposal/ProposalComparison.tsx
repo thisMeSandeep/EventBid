@@ -44,7 +44,7 @@ interface ComparisonRow {
 
 function BoolCell({ value }: { value: boolean }) {
   return value ? (
-    <Check className="mx-auto h-[18px] w-[18px] text-emerald-600" strokeWidth={1.75} />
+    <Check className="mx-auto h-[18px] w-[18px] text-foreground" strokeWidth={1.5} />
   ) : (
     <X className="mx-auto h-[18px] w-[18px] text-muted-foreground/40" strokeWidth={1.5} />
   )
@@ -67,9 +67,9 @@ function buildRows(proposals: ProposalWithVenue[]): ComparisonRow[] {
     {
       label: 'Total price',
       render: (p) => (
-        <span className="text-[15px] font-semibold text-foreground">
+        <span className="text-[15px] font-medium tabular-nums text-foreground">
           {formatRupees(p.totalPrice)}
-          <span className="ml-1 text-[11px] font-normal text-muted-foreground">
+          <span className="ml-1 font-mono text-[10px] font-normal uppercase tracking-[0.1em] text-muted-foreground">
             {priceTypeLabel[p.priceType] ?? p.priceType}
           </span>
         </span>
@@ -170,7 +170,7 @@ export function ProposalComparison({
                 }`}
               >
                 {i === bestIndex && (
-                  <Badge className="mb-2 rounded-full bg-foreground font-normal text-background">
+                  <Badge className="mb-2 rounded-full bg-primary px-2.5 font-mono text-[10px] font-normal uppercase tracking-[0.12em] text-primary-foreground">
                     Best match
                   </Badge>
                 )}
@@ -182,7 +182,7 @@ export function ProposalComparison({
                   {p.venueName}
                   <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />
                 </Link>
-                <div className="text-xs font-normal text-muted-foreground">
+                <div className="font-mono text-[10px] font-normal uppercase tracking-[0.12em] text-muted-foreground">
                   {p.venueCity}
                 </div>
               </TableHead>
@@ -194,9 +194,9 @@ export function ProposalComparison({
           {rows.map((row) => (
             <TableRow
               key={row.label}
-              className="border-black/[0.06] hover:bg-transparent"
+              className="border-border hover:bg-transparent"
             >
-              <TableCell className="px-5 py-3.5 text-[14px] text-muted-foreground">
+              <TableCell className="px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
                 {row.label}
               </TableCell>
               {proposals.map((p, i) => (
@@ -234,7 +234,7 @@ export function ProposalComparison({
                     asChild
                     size="sm"
                     variant="outline"
-                    className="w-full rounded-full border-black/[0.06] font-normal transition-colors duration-200 ease-out hover:bg-muted/60"
+                    className="w-full rounded-full border-border font-normal transition-colors duration-200 ease-out hover:bg-muted/60"
                   >
                     <Link to="/venue/$venueId" params={{ venueId: p.venueId }}>
                       View profile

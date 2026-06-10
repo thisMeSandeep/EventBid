@@ -2,6 +2,8 @@ import type { BriefWizardForm } from '../brief-form'
 import { Label } from '#/components/ui/label'
 import { Input } from '#/components/ui/input'
 
+const labelClass = 'font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground'
+
 const EVENT_TYPES = [
   { value: 'wedding', label: 'Wedding' },
   { value: 'birthday', label: 'Birthday' },
@@ -15,7 +17,7 @@ export function EventBasicsStep({ form }: { form: BriefWizardForm }) {
       <form.Field name="eventType">
         {(field) => (
           <div className="space-y-2">
-            <Label>Event type</Label>
+            <Label className={labelClass}>Event type</Label>
             <div className="grid grid-cols-2 gap-3">
               {EVENT_TYPES.map((t) => {
                 const selected = field.state.value === t.value
@@ -28,7 +30,7 @@ export function EventBasicsStep({ form }: { form: BriefWizardForm }) {
                       'rounded-lg border p-3 text-sm font-medium transition-colors duration-200 ease-out',
                       selected
                         ? 'border-foreground bg-foreground text-background'
-                        : 'border-black/[0.06] bg-card text-foreground hover:bg-muted/60',
+                        : 'border-border bg-card text-foreground hover:bg-muted/60',
                     ].join(' ')}
                   >
                     {t.label}
@@ -43,8 +45,10 @@ export function EventBasicsStep({ form }: { form: BriefWizardForm }) {
       <div className="grid grid-cols-2 gap-4">
         <form.Field name="eventDateFrom">
           {(field) => (
-            <div className="space-y-1">
-              <Label htmlFor={field.name}>From</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor={field.name} className={labelClass}>
+                From
+              </Label>
               <Input
                 id={field.name}
                 type="date"
@@ -56,8 +60,10 @@ export function EventBasicsStep({ form }: { form: BriefWizardForm }) {
         </form.Field>
         <form.Field name="eventDateTo">
           {(field) => (
-            <div className="space-y-1">
-              <Label htmlFor={field.name}>To</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor={field.name} className={labelClass}>
+                To
+              </Label>
               <Input
                 id={field.name}
                 type="date"
@@ -72,8 +78,10 @@ export function EventBasicsStep({ form }: { form: BriefWizardForm }) {
 
       <form.Field name="headcount">
         {(field) => (
-          <div className="space-y-1">
-            <Label htmlFor={field.name}>Headcount</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor={field.name} className={labelClass}>
+              Headcount
+            </Label>
             <Input
               id={field.name}
               type="number"

@@ -36,11 +36,11 @@ function ComparePage() {
         Back to brief
       </Link>
 
-      <h1 className="mt-6 font-serif text-[28px] font-normal tracking-[-0.01em] text-foreground">
+      <h1 className="mt-6 font-serif text-[32px] font-normal tracking-[-0.01em] text-foreground">
         Compare proposals
       </h1>
-      <p className="mt-1 text-[13px] text-muted-foreground">
-        {proposals.length} proposal{proposals.length === 1 ? '' : 's'} side by side
+      <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+        {proposals.length} proposal{proposals.length === 1 ? '' : 's'} · side by side
       </p>
 
       <div className="mt-8">

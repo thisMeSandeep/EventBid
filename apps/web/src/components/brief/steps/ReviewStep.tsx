@@ -5,8 +5,10 @@ const cap = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '—')
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-4 py-3 first:pt-0 last:pb-0">
-      <span className="text-muted-foreground">{label}</span>
+    <div className="flex items-baseline justify-between gap-4 py-3 first:pt-0 last:pb-0">
+      <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+        {label}
+      </span>
       <span className="text-right text-foreground">{value}</span>
     </div>
   )
@@ -16,7 +18,7 @@ export function ReviewStep({ form }: { form: BriefWizardForm }) {
   return (
     <form.Subscribe selector={(s) => s.values}>
       {(v) => (
-        <div className="divide-y divide-black/[0.06] text-sm">
+        <div className="divide-y divide-border text-sm">
           <Row label="Event" value={cap(v.eventType)} />
           <Row
             label="Dates"

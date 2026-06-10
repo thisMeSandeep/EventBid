@@ -75,19 +75,21 @@ function HostProposalDetailPage() {
           <Link
             to="/venue/$venueId"
             params={{ venueId: proposal.venueId }}
-            className="inline-flex items-center gap-1 font-serif text-[28px] font-normal tracking-[-0.01em] text-foreground transition-colors hover:text-foreground/70"
+            className="inline-flex items-center gap-1 font-serif text-[32px] font-normal tracking-[-0.01em] text-foreground transition-colors hover:text-foreground/70"
           >
             {proposal.venueName}
             <ArrowUpRight className="h-5 w-5 text-muted-foreground" />
           </Link>
-          <p className="mt-1 text-[13px] text-muted-foreground">{proposal.venueCity}</p>
+          <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+            {proposal.venueCity}
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
             asChild
             variant="outline"
-            className="rounded-full border-black/[0.06] font-normal transition-colors duration-200 ease-out hover:bg-muted/60"
+            className="rounded-full border-border font-normal transition-colors duration-200 ease-out hover:bg-muted/60"
           >
             <Link to="/venue/$venueId" params={{ venueId: proposal.venueId }}>
               View venue profile

@@ -47,14 +47,14 @@ function BriefDetailIndex() {
         <BriefSummaryBlock brief={brief} />
 
       <section>
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-medium text-foreground">
-            Proposals ({proposals.length})
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+            Proposals · {proposals.length} received
           </h2>
 
           {status === 'running' && (
-            <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
               Analysing…
             </span>
           )}
@@ -63,10 +63,10 @@ function BriefDetailIndex() {
             <button
               type="button"
               onClick={() => setShowAnalysis((v) => !v)}
-              className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-foreground"
             >
               <Sparkles className="h-3.5 w-3.5" />
-              {showAnalysis ? 'Hide AI Analysis' : 'View AI Analysis'}
+              {showAnalysis ? 'Hide AI analysis' : 'View AI analysis'}
             </button>
           )}
         </div>

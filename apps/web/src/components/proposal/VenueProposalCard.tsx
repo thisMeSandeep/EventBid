@@ -13,7 +13,7 @@ const priceTypeLabel: Record<string, string> = {
 
 const STATUS_STYLES: Record<string, string> = {
   active: 'bg-foreground text-background',
-  locked: 'bg-emerald-100 text-emerald-800',
+  locked: 'bg-primary text-primary-foreground',
   closed: 'bg-muted text-muted-foreground',
   superseded: 'bg-muted text-muted-foreground',
 }
@@ -28,7 +28,7 @@ const STATUS_LABEL: Record<string, string> = {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <h4 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+      <h4 className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
         {title}
       </h4>
       <div className="mt-2">{children}</div>
@@ -40,9 +40,9 @@ function Confirm({ ok, label }: { ok: boolean; label: string }) {
   return (
     <div className="flex items-center gap-2 text-sm">
       {ok ? (
-        <Check className="h-4 w-4 text-emerald-600" />
+        <Check className="h-4 w-4 text-foreground" strokeWidth={1.5} />
       ) : (
-        <X className="h-4 w-4 text-muted-foreground" />
+        <X className="h-4 w-4 text-muted-foreground/60" strokeWidth={1.5} />
       )}
       <span className={ok ? 'text-foreground' : 'text-muted-foreground'}>{label}</span>
     </div>
@@ -51,33 +51,33 @@ function Confirm({ ok, label }: { ok: boolean; label: string }) {
 
 export function VenueProposalCard({ proposal }: { proposal: Proposal }) {
   return (
-    <div className="rounded-xl border border-black/[0.06] bg-card p-6 shadow-sm sm:p-8">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+    <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-3">
+        <div className="flex items-center gap-2.5">
           <span
             className={[
-              'rounded-full px-2.5 py-0.5 text-xs font-medium',
+              'rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em]',
               STATUS_STYLES[proposal.status] ?? 'bg-muted text-muted-foreground',
             ].join(' ')}
           >
             {STATUS_LABEL[proposal.status] ?? cap(proposal.status)}
           </span>
-          <span className="text-[13px] text-muted-foreground">
-            Version {proposal.version}
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+            Rev {proposal.version}
           </span>
         </div>
         {proposal.createdAt && (
-          <span className="text-[13px] text-muted-foreground">
+          <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
             {formatDistanceToNow(new Date(proposal.createdAt), { addSuffix: true })}
           </span>
         )}
       </div>
 
-      <div className="mt-6 space-y-6">
+      <div className="space-y-6 p-6 sm:p-8">
         <Section title="Pricing">
-          <p className="text-2xl font-semibold text-foreground">
+          <p className="text-[24px] font-medium tabular-nums text-foreground">
             {formatRupees(proposal.totalPrice)}
-            <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+            <span className="ml-1.5 font-mono text-[10px] font-normal uppercase tracking-[0.12em] text-muted-foreground">
               {priceTypeLabel[proposal.priceType] ?? proposal.priceType}
             </span>
           </p>
@@ -87,11 +87,8 @@ export function VenueProposalCard({ proposal }: { proposal: Proposal }) {
           <Section title="What's included">
             <ul className="space-y-1.5">
               {proposal.inclusions.map((inc: string) => (
-                <li
-                  key={inc}
-                  className="flex items-center gap-2 text-sm text-foreground"
-                >
-                  <Check className="h-4 w-4 shrink-0 text-emerald-600" />
+                <li key={inc} className="flex items-center gap-2 text-sm text-foreground">
+                  <Check className="h-4 w-4 shrink-0 text-foreground" strokeWidth={1.5} />
                   {inc}
                 </li>
               ))}
@@ -105,7 +102,7 @@ export function VenueProposalCard({ proposal }: { proposal: Proposal }) {
               {proposal.amenities.map((a: string) => (
                 <span
                   key={a}
-                  className="rounded-full border border-black/[0.06] bg-muted/60 px-3 py-1 text-[13px] text-foreground"
+                  className="rounded-full border border-border bg-muted/60 px-3 py-1 text-[13px] text-foreground"
                 >
                   {cap(a)}
                 </span>
@@ -123,10 +120,7 @@ export function VenueProposalCard({ proposal }: { proposal: Proposal }) {
         <Section title="Confirmations">
           <div className="space-y-1.5">
             <Confirm ok={proposal.capacityConfirmed} label="Capacity confirmed" />
-            <Confirm
-              ok={proposal.availabilityConfirmed}
-              label="Availability confirmed"
-            />
+            <Confirm ok={proposal.availabilityConfirmed} label="Availability confirmed" />
           </div>
         </Section>
 

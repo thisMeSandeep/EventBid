@@ -3,8 +3,8 @@ interface BriefStatusBadgeProps {
 }
 
 const styles: Record<string, string> = {
-  open: 'bg-emerald-50 text-emerald-700',
-  evaluating: 'bg-accent text-primary',
+  open: 'border border-border bg-card text-foreground',
+  evaluating: 'bg-accent text-accent-foreground',
   closed: 'bg-muted text-muted-foreground',
   expired: 'bg-destructive/10 text-destructive',
 }
@@ -21,8 +21,11 @@ export function BriefStatusBadge({ status }: BriefStatusBadgeProps) {
   const label = labels[status] ?? status
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${cls}`}
     >
+      {status === 'open' && (
+        <span className="h-1.5 w-1.5 rounded-full bg-primary motion-safe:animate-pulse" />
+      )}
       {label}
     </span>
   )

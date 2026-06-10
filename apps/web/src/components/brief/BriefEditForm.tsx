@@ -20,9 +20,9 @@ import { Button } from '#/components/ui/button'
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section>
-      <h2 className="text-base font-medium text-foreground">{title}</h2>
-      <div className="mt-4">{children}</div>
+    <section className="border-t border-border pt-6 first:border-0 first:pt-0">
+      <h2 className="font-serif text-[22px] font-normal text-foreground">{title}</h2>
+      <div className="mt-5">{children}</div>
     </section>
   )
 }

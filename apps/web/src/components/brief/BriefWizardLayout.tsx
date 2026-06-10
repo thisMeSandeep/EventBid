@@ -35,27 +35,27 @@ export function BriefWizardLayout({
       </Link>
 
       <div className="mt-6">
-        <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-          Step {step} of {totalSteps}
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          Step 0{step} of 0{totalSteps}
         </p>
-        <h1 className="mt-2 font-serif text-[28px] font-normal tracking-[-0.01em] text-foreground">
+        <h1 className="mt-3 font-serif text-[32px] font-normal tracking-[-0.01em] text-foreground">
           {title}
         </h1>
         {/* Step indicator */}
-        <div className="mt-4 flex gap-1.5">
+        <div className="mt-5 flex gap-1.5">
           {Array.from({ length: totalSteps }, (_, i) => (
             <span
               key={i}
               className={[
                 'h-1 flex-1 rounded-full transition-colors duration-200 ease-out',
-                i < step ? 'bg-foreground' : 'bg-black/[0.06]',
+                i < step ? 'bg-primary' : 'bg-border',
               ].join(' ')}
             />
           ))}
         </div>
       </div>
 
-      <div className="mt-8 rounded-xl border border-black/[0.06] bg-card p-6 shadow-sm sm:p-8">
+      <div className="mt-8 rounded-xl border border-border bg-card p-6 shadow-sm sm:p-8">
         {children}
       </div>
 
@@ -65,7 +65,7 @@ export function BriefWizardLayout({
             type="button"
             variant="outline"
             onClick={onBack}
-            className="rounded-full border-black/[0.06] font-normal transition-colors duration-200 ease-out hover:bg-muted/60"
+            className="rounded-full border-border font-normal transition-colors duration-200 ease-out hover:bg-muted/60"
           >
             Back
           </Button>

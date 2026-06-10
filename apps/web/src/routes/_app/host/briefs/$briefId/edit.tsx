@@ -31,6 +31,9 @@ function EditBriefPage() {
         <ArrowLeft className="h-4 w-4" />
         Back to brief
       </Link>
+      <h1 className="mt-6 font-serif text-[32px] font-normal tracking-[-0.01em] text-foreground">
+        Edit brief
+      </h1>
       <BriefEditForm brief={brief} />
     </div>
   )
