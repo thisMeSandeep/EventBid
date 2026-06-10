@@ -1,4 +1,4 @@
-import { CalendarDays, Building2, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { cn } from '#/lib/utils.ts'
 
 type Role = 'host' | 'venue_rep'
@@ -11,15 +11,15 @@ interface RoleSelectorProps {
 const roles = [
   {
     value: 'host' as Role,
-    icon: CalendarDays,
+    tag: 'Host',
     label: "I'm planning an event",
-    description: 'Find and book venues for your event',
+    description: 'Post a brief and let venues come to you',
   },
   {
     value: 'venue_rep' as Role,
-    icon: Building2,
+    tag: 'Venue',
     label: 'I represent a venue',
-    description: 'List your venue and receive proposals',
+    description: 'Receive matching briefs and send proposals',
   },
 ]
 
@@ -27,7 +27,6 @@ export function RoleSelector({ value, onChange }: RoleSelectorProps) {
   return (
     <div className="space-y-3">
       {roles.map((role) => {
-        const Icon = role.icon
         const selected = value === role.value
         return (
           <button
@@ -36,13 +35,20 @@ export function RoleSelector({ value, onChange }: RoleSelectorProps) {
             aria-pressed={selected}
             onClick={() => onChange(role.value)}
             className={cn(
-              'flex w-full items-center gap-4 rounded-2xl border p-5 text-left transition-[transform,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 motion-reduce:transform-none',
-              selected
-                ? 'border-primary bg-accent/40'
-                : 'border-black/[0.06] bg-card hover:bg-muted/50',
+              'flex w-full items-center gap-4 rounded-xl border p-5 text-left transition-[transform,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 motion-reduce:transform-none',
+              selected ? 'border-primary bg-accent/40' : 'border-border bg-card hover:bg-muted/50',
             )}
           >
-            <Icon className="h-6 w-6 shrink-0 text-primary" strokeWidth={1.5} />
+            <span
+              className={cn(
+                'shrink-0 rounded-md px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.12em]',
+                selected
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground',
+              )}
+            >
+              {role.tag}
+            </span>
 
             <div className="flex-1">
               <p className="text-[15px] font-medium text-foreground">{role.label}</p>
@@ -54,7 +60,7 @@ export function RoleSelector({ value, onChange }: RoleSelectorProps) {
             <span
               className={cn(
                 'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors duration-200 ease-out',
-                selected ? 'border-primary bg-primary text-primary-foreground' : 'border-black/15',
+                selected ? 'border-primary bg-primary text-primary-foreground' : 'border-border',
               )}
             >
               {selected && <Check className="h-3 w-3" strokeWidth={2.5} />}

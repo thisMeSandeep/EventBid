@@ -74,10 +74,15 @@ function RolePage() {
 
         {/* Heading */}
         <div className="text-center">
-          <h1 className="font-serif text-[32px] font-normal tracking-[-0.01em] text-foreground">
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+            Step 02 of 02
+          </p>
+          <h1 className="mt-3 font-serif text-[36px] font-normal tracking-[-0.01em] text-foreground">
             {firstName ? `Welcome, ${firstName}` : 'Welcome'}
           </h1>
-          <p className="mt-2 text-[15px] text-muted-foreground">How will you use EventBid?</p>
+          <p className="mt-2 text-[15px] leading-[1.6] text-muted-foreground">
+            Choose your side of the table.
+          </p>
         </div>
 
         {/* Role selector */}
@@ -98,7 +103,7 @@ function RolePage() {
           disabled={roleMutation.isPending}
           onClick={() => {
             if (!role) {
-              setError('Please select how you want to use EventBid')
+              setError('Choose a role to continue')
               return
             }
             roleMutation.mutate(role)

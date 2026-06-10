@@ -78,16 +78,16 @@ export function LoginForm({ next, error }: LoginFormProps) {
       image={heroImage}
       imageAlt="Elegant event venue interior"
       caption={{
-        title: 'Compare real proposals. Choose with confidence.',
-        subtitle: 'The smarter way to find event venues.',
+        status: 'Brief №2041 · 3 proposals in',
+        title: 'Pick up where you left off.',
       }}
     >
       {/* Heading */}
-      <h1 className="font-serif text-[32px] font-normal tracking-[-0.01em] text-foreground">
+      <h1 className="font-serif text-[36px] font-normal tracking-[-0.01em] text-foreground">
         Welcome back
       </h1>
-      <p className="mt-2 text-[15px] text-muted-foreground">
-        Sign in to your account to continue
+      <p className="mt-2 text-[15px] leading-[1.6] text-muted-foreground">
+        Sign in to pick up your briefs and proposals.
       </p>
 
       {/* Form */}
@@ -110,7 +110,12 @@ export function LoginForm({ next, error }: LoginFormProps) {
         >
           {(field) => (
             <div className="space-y-1.5">
-              <Label htmlFor={field.name}>Email</Label>
+              <Label
+                htmlFor={field.name}
+                className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
+              >
+                Email
+              </Label>
               <Input
                 id={field.name}
                 type="email"
@@ -141,7 +146,12 @@ export function LoginForm({ next, error }: LoginFormProps) {
         >
           {(field) => (
             <div className="space-y-1.5">
-              <Label htmlFor={field.name}>Password</Label>
+              <Label
+                htmlFor={field.name}
+                className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
+              >
+                Password
+              </Label>
               <PasswordInput
                 id={field.name}
                 placeholder="••••••••"
@@ -172,7 +182,9 @@ export function LoginForm({ next, error }: LoginFormProps) {
       {/* Google OAuth */}
       <div className="mt-6 flex items-center gap-3">
         <Separator className="flex-1 bg-border/60" />
-        <span className="text-xs text-muted-foreground">or</span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          or
+        </span>
         <Separator className="flex-1 bg-border/60" />
       </div>
       <button
@@ -184,7 +196,7 @@ export function LoginForm({ next, error }: LoginFormProps) {
             errorCallbackURL: '/login',
           })
         }
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-black/[0.06] bg-card px-4 py-2.5 text-sm font-normal text-foreground transition-colors duration-200 ease-out hover:bg-muted/60"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 text-sm font-normal text-foreground transition-colors duration-200 ease-out hover:bg-muted/60"
       >
         <img src={googleIcon} alt="" className="h-4 w-4" />
         Continue with Google

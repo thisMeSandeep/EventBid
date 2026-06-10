@@ -4,7 +4,7 @@ import logo from '#/assets/logo.svg'
 interface AuthLayoutProps {
   image: string
   imageAlt: string
-  caption?: { title: string; subtitle: string }
+  caption?: { status: string; title: string }
   children: ReactNode
 }
 
@@ -21,18 +21,25 @@ export function AuthLayout({ image, imageAlt, caption, children }: AuthLayoutPro
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-sm py-10">{children}</div>
         </div>
+
+        <p className="self-start font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          Venues compete · You choose
+        </p>
       </div>
 
       {/* Image side */}
       <div className="relative hidden lg:block">
         <img src={image} alt={imageAlt} className="absolute inset-0 h-full w-full object-cover" />
         {caption && (
-          <div className="absolute inset-0 flex items-end bg-foreground/15 p-12">
-            <div className="max-w-sm">
-              <p className="font-serif text-[30px] font-normal leading-[1.15] text-white">
+          <div className="absolute inset-0 flex items-end bg-gradient-to-t from-foreground/75 via-foreground/15 to-transparent p-12">
+            <div className="max-w-md">
+              <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-background/80">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                {caption.status}
+              </p>
+              <p className="mt-3 font-serif text-[34px] font-normal leading-[1.12] text-background">
                 {caption.title}
               </p>
-              <p className="mt-2.5 text-[14px] leading-[1.6] text-white/85">{caption.subtitle}</p>
             </div>
           </div>
         )}
