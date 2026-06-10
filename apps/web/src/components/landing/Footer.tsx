@@ -29,7 +29,7 @@ function FooterLink({ children }: { children: string }) {
 
 export function Footer() {
   return (
-    <footer className="border-t border-black/[0.06] bg-background py-20">
+    <footer className="border-t border-border bg-background py-20">
       <div className="mx-auto max-w-[1180px] px-6 md:px-8">
         <div className="grid gap-12 md:grid-cols-4 md:gap-16">
           {/* Brand column */}
@@ -38,8 +38,8 @@ export function Footer() {
               <img src={logo} alt="EventBid" className="h-7 w-auto" />
               <span className="text-[17px] text-foreground">EventBid</span>
             </div>
-            <p className="mt-4 max-w-[220px] text-[13px] leading-[1.6] text-muted-foreground">
-              The smart way to find and compare event venues.
+            <p className="mt-4 max-w-[220px] font-serif text-[17px] leading-[1.4] text-muted-foreground">
+              Venues compete. <em>You choose.</em>
             </p>
             <div className="mt-5 flex items-center gap-4">
               {socials.map(({ icon: Icon, label }) => (

@@ -4,17 +4,12 @@ import { redirectAuthenticatedHome } from '#/lib/auth-redirect'
 import { SITE_URL, landingJsonLd, landingMeta } from '#/lib/seo'
 import { Navbar } from '#/components/landing/Navbar'
 import { HeroSection } from '#/components/landing/HeroSection'
-import { EventTypes } from '#/components/landing/EventTypes'
-import { BeforeAfter } from '#/components/landing/BeforeAfter'
-import { HowItWorks } from '#/components/landing/HowItWorks'
-import { FeatureGrid } from '#/components/landing/FeatureGrid'
-import { ComparisonTable } from '#/components/landing/ComparisonTable'
-import { AIAnalysis } from '#/components/landing/AIAnalysis'
-import { StatsBar } from '#/components/landing/StatsBar'
-import { Testimonials } from '#/components/landing/Testimonials'
+import { Lifecycle } from '#/components/landing/Lifecycle'
+import { Compared } from '#/components/landing/Compared'
 import { ForVenues } from '#/components/landing/ForVenues'
-import { CTABanner } from '#/components/landing/CTABanner'
+import { Proof } from '#/components/landing/Proof'
 import { FAQ } from '#/components/landing/FAQ'
+import { ClosingCTA } from '#/components/landing/ClosingCTA'
 import { Footer } from '#/components/landing/Footer'
 
 export const Route = createFileRoute('/')({
@@ -39,17 +34,12 @@ function LandingPage() {
       <Navbar />
       <main className="pt-16">
         <HeroSection />
-        <EventTypes />
-        <BeforeAfter />
-        <HowItWorks />
-        <FeatureGrid />
-        <ComparisonTable />
-        <AIAnalysis />
-        <StatsBar />
-        <Testimonials />
+        <Lifecycle />
+        <Compared />
         <ForVenues />
-        <CTABanner />
+        <Proof />
         <FAQ />
+        <ClosingCTA />
       </main>
       <Footer />
     </div>

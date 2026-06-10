@@ -37,7 +37,9 @@ export function FAQ() {
     <section className="bg-muted py-28 md:py-32">
       <div className="mx-auto max-w-[720px] px-6 md:px-8">
         <div className="text-center">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">FAQ</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+            Before you post
+          </p>
           <h2 className="mt-4 font-serif text-[34px] font-normal leading-[1.1] tracking-[-0.01em] text-foreground md:text-[44px]">
             Questions, answered
           </h2>
@@ -45,8 +47,8 @@ export function FAQ() {
 
         <Accordion type="single" collapsible defaultValue="item-0" className="mt-12">
           {faqs.map((faq, i) => (
-            <AccordionItem key={faq.q} value={`item-${i}`} className="border-black/[0.06]">
-              <AccordionTrigger className="py-6 text-[17px] font-normal text-foreground hover:no-underline [&[data-state=open]>svg]:text-primary">
+            <AccordionItem key={faq.q} value={`item-${i}`} className="border-border">
+              <AccordionTrigger className="py-6 text-left font-serif text-[20px] font-normal text-foreground hover:no-underline [&[data-state=open]>svg]:text-foreground">
                 {faq.q}
               </AccordionTrigger>
               <AccordionContent className="pb-6 text-[15px] leading-[1.7] text-muted-foreground">
