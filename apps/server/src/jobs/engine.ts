@@ -43,6 +43,8 @@ export class JobEngine {
         {
           connection: this.connection as ConnectionOptions,
           concurrency: config.concurrency,
+          drainDelay: 60, // seconds between idle fetch re-polls (default 5)
+          stalledInterval: 300_000, // ms between stalled-job checks (default 30_000)
         },
       );
 
@@ -55,6 +57,17 @@ export class JobEngine {
 
       worker.on("ready", () => {
         logger.info({ queueName: config.queueName }, "Job worker ready");
+      });
+
+      // Internal worker errors (e.g. Redis down / Upstash quota exceeded during
+      // the periodic stalled-job check). Log a one-line message instead of the
+      // full Redis command dump, and let BullMQ keep failing silently — this
+      // must not crash or block the rest of the server.
+      worker.on("error", (error) => {
+        logger.warn(
+          { queueName: config.queueName, err: (error as Error).message },
+          "Job worker error (Redis/BullMQ) — ignoring",
+        );
       });
 
       if (config.cron) {
